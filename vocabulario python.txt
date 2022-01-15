@@ -1,0 +1,71 @@
+Clase:
+La clase es como una un modelo de donde se pueden sacar varios objetos (algo como un molde para un queque)
+- Las funciones dentro de una clase se llaman metodos
+
+Clase Padre / SuperClase:
+Una clase padre o Super Clase es cuando creamos una clase con la intencion de crear mas clases que 
+    hereden sus atributos, metodos u otros
+- Sintaxis de una clase hijo:
+
+class ClaseHijo(ClasePadre):
+    pass
+
+Aquí vemos como creamos una clase hijo y como atribuos o parametros le ponemos a la clase Padre
+- Los nombres de las clases pueden ser diferentes obvio
+
+Ejemplar de Clase / Objeto / Instancia:
+Son los productos de las clases (los objetos), 
+estos comparten algunas caracteristicas ya que son de la misma clase
+- El objeto tiene un estado
+- El objeto tiene propiedades
+- El objeto tiene un comportamiento
+
+
+Modularizacion:
+La Modularizacion son como varias clases que se crean al hacer un programa complejo
+- Cada modulo o clase funcionan de una manera independiente,
+    haciendo que si una deja de funcionar, no afecte al programa, es decir, que no se caiga el programa.
+- Todas las clases estan conectadas entre si para funcionar como equipo pero estas no saben nada de la otra
+
+Metodos de Acceso:
+Con estos se puede conectar las clases creadas pero solo tiene acceso a cirtas caracteristicas de cada clase
+
+Nomenclatura del Punto: 
+Podemos acceder a las propiedades y al comportamiento de un objeto creado con el Punto
+Por ejemplo, creamos un objeto llamado MiCoche, para acceder a sus propiedades o comportamientos 
+    haremos lo siguiente:
+MiCoche.color = "rojo"
+
+Constructor:
+El constructor es un metodo especial que le da un estado inicial a los objetos
+- Un estado inicial es como un telefono en estado de fabrica
+
+Estado inicial:
+El estado inicial es cuando creamos un objeto a partir de una clase ya creada que adquiere las propiedades
+    o caracteristicas de este.
+- Un estado inicial es como un telefono en estado de fabrica
+- El estado inicial tiene la siguiente sintaxis:
+
+def __init__(self):
+    self.parametro1 = dato1
+    self.parametro2 = dato2
+
+- En la primera linea todo debe ir tal cual, a no ser de que deseemos agregar mas parametros
+- en las demas lineas debemos iniciar siempre con el "self." para indicar que se trata del objeto
+
+Encapsulacion:
+Consiste en encapsular o proteger una propiedad de una clase para que no se pueda modificar fuerade esta clase
+- Podemos encapsular variables y metodos
+- La manera de encapsular variables y metodos es agregando dos guiones bajos antes de declarar el metodo y/o la variables
+- Cuando se llame a el metodo o la variable encapsulada dentro de la clase (ya que es el unico lugar de donde
+    podemos acceder a estos) se deberán colocar de igual manera los guiones bajos al inicio
+
+Herencia Multiple:
+En python podemos crear 2 o mas clases padre y una clase que herede de estas.
+- Siempre se dará preferencia a la primera clase puesta como parametro de la clase hija
+- Debido a esta preferencia, se escogera el metodo __init__ de la primera clase escogida en caso la tuviera.
+
+Polimorfismo:
+Es cuando un objeto cambia de clase (al cambiar la clase obviamente cambiara tambien el comportamiento y los atributos)
+
+
