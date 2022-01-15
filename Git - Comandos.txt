@@ -1,0 +1,10 @@
+git add . (Mandar todos los cambios al staying area)
+git commit -m "Texto" (Empaquetar los archivos y mandar a repositorio local)
+git push (Sube los archivos al git hub Repositorio Remoto)
+
+git clone <link> (Clona los archivos del repositorio remoto a la carpeta seleccionada)
+
+git status (Situacion actual de archivos)
+
+git diff (Mostrar archivos con cambios sin subir al staying area)
+
