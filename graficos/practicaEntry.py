@@ -52,7 +52,7 @@ botonEnviar.pack(pady = 10)
 raiz.mainloop()
 
 """
-Podemos declarar una variable como StringVar(), IntVar(), etc para indicar que esa variable sera de lo que le indiquemos.
+
 
 Entry:
 	Es una clase como un label pero se usa para ingresar cuadros de texto para el usuario

@@ -49,7 +49,7 @@ def sumar(num):
     global resetearPantalla
 
     operacion = "suma"
-    resultado += int(num)
+    resultado += float(num)
     resetearPantalla = True
     numeroPantalla.set(resultado)
 
@@ -65,13 +65,13 @@ def restar(num):
     global contadorResta
 
     if contadorResta == 0:
-        num1 = int(num)
+        num1 = float(num)
         resultado = num1
     else:
         if contadorResta == 1:
-            resultado = num1 - int(num)
+            resultado = num1 - float(num)
         else:
-            resultado = resultado - int(num)
+            resultado = resultado - float(num)
 
     contadorResta += 1
     numeroPantalla.set(resultado)
@@ -90,13 +90,13 @@ def multiplicar(num):
     global contadorMult
 
     if contadorMult == 0:
-        num1 = int(num)
+        num1 = float(num)
         resultado = num1
     else:
         if contadorMult == 1:
-            resultado = num1 * int(num)
+            resultado = num1 * float(num)
         else:
-            resultado = resultado * int(num)
+            resultado = resultado * float(num)
 
     resetearPantalla = True
     numeroPantalla.set(resultado)
@@ -115,13 +115,13 @@ def dividir(num):
     global contadorDiv
 
     if contadorDiv == 0:
-        num1 = int(num)
+        num1 = float(num)
         resultado = num1
     else:
         if contadorDiv == 1:
-            resultado = num1 / int(num)
+            resultado = num1 / float(num)
         else:
-            resultado = resultado / int(num)
+            resultado = resultado / float(num)
 
     resetearPantalla = True
     numeroPantalla.set(resultado)
@@ -154,10 +154,13 @@ def accionBotonCE():
 def accionBotonDel():
     global numeroPantalla
 
-    listaNumeroPantalla = list(numeroPantalla.get()) # Obtengo la lista de caracteres que hay en pantalla
-    listaNumeroPantalla.pop() # Borro el ultimo valor almacenado en la cadena creada arriba
-    listaNumeroPantalla = "".join(listaNumeroPantalla) # Vuelvo la lista en un str con el metodo .join()
-    numeroPantalla.set(listaNumeroPantalla) # LO LOGRE SIUUUUUUUUUUUUUUUUUUUUU
+    # Obtengo la lista de caracteres que hay en pantalla
+    listaNumeroPantalla = list(numeroPantalla.get())
+    listaNumeroPantalla.pop()  # Borro el ultimo valor almacenado en la cadena creada arriba
+    # Vuelvo la lista en un str con el metodo .join()
+    listaNumeroPantalla = "".join(listaNumeroPantalla)
+    numeroPantalla.set(listaNumeroPantalla)
+
 
 def accionBotonResultado():
     global resultado
@@ -168,21 +171,21 @@ def accionBotonResultado():
     global contadorDiv
 
     if operacion == "suma":
-        numeroPantalla.set(resultado + int(numeroPantalla.get()))
+        numeroPantalla.set(resultado + float(numeroPantalla.get()))
         resultado = 0
 
     elif operacion == "resta":
-        numeroPantalla.set(resultado - int(numeroPantalla.get()))
+        numeroPantalla.set(resultado - float(numeroPantalla.get()))
         resultado = 0
         contadorResta = 0
 
     elif operacion == "multiplicacion":
-        numeroPantalla.set(resultado * int(numeroPantalla.get()))
+        numeroPantalla.set(resultado * float(numeroPantalla.get()))
         resultado = 0
         contadorMult = 0
 
     elif operacion == "division":
-        numeroPantalla.set(resultado / int(numeroPantalla.get()))
+        numeroPantalla.set(resultado / float(numeroPantalla.get()))
         resultado = 0
         contadorDiv = 0
 
@@ -207,13 +210,16 @@ botonDividir.grid(row=2, column=4, padx=2, pady=2)
 
 #
 
-boton1 = Button(frame, text="1", width=4, command=lambda: mostrarNumero("1"))
+boton1 = Button(frame, text="1", width=4,
+                command=lambda: mostrarNumero("1"), bg="#C8C8C8")
 boton1.grid(row=5, column=1, padx=2, pady=2)
 
-boton2 = Button(frame, text="2", width=4, command=lambda: mostrarNumero("2"))
+boton2 = Button(frame, text="2", width=4,
+                command=lambda: mostrarNumero("2"), bg="#C8C8C8")
 boton2.grid(row=5, column=2, padx=2, pady=2)
 
-boton3 = Button(frame, text="3", width=4, command=lambda: mostrarNumero("3"))
+boton3 = Button(frame, text="3", width=4,
+                command=lambda: mostrarNumero("3"), bg="#C8C8C8")
 boton3.grid(row=5, column=3, padx=2, pady=2)
 
 botonSuma = Button(frame, text="+", width=4,
@@ -222,13 +228,16 @@ botonSuma.grid(row=5, column=4, padx=2, pady=2)
 
 #
 
-boton4 = Button(frame, text="4", width=4, command=lambda: mostrarNumero("4"))
+boton4 = Button(frame, text="4", width=4,
+                command=lambda: mostrarNumero("4"), bg="#C8C8C8")
 boton4.grid(row=4, column=1, padx=2, pady=2)
 
-boton5 = Button(frame, text="5", width=4, command=lambda: mostrarNumero("5"))
+boton5 = Button(frame, text="5", width=4,
+                command=lambda: mostrarNumero("5"), bg="#C8C8C8")
 boton5.grid(row=4, column=2, padx=2, pady=2)
 
-boton6 = Button(frame, text="6", width=4, command=lambda: mostrarNumero("6"))
+boton6 = Button(frame, text="6", width=4,
+                command=lambda: mostrarNumero("6"), bg="#C8C8C8")
 boton6.grid(row=4, column=3, padx=2, pady=2)
 
 botonResta = Button(frame, text="-", width=4,
@@ -237,13 +246,16 @@ botonResta.grid(row=4, column=4, padx=2, pady=2)
 
 #
 
-boton7 = Button(frame, text="7", width=4, command=lambda: mostrarNumero("7"))
+boton7 = Button(frame, text="7", width=4,
+                command=lambda: mostrarNumero("7"), bg="#C8C8C8")
 boton7.grid(row=3, column=1, padx=2, pady=2)
 
-boton8 = Button(frame, text="8", width=4, command=lambda: mostrarNumero("8"))
+boton8 = Button(frame, text="8", width=4,
+                command=lambda: mostrarNumero("8"), bg="#C8C8C8")
 boton8.grid(row=3, column=2, padx=2, pady=2)
 
-boton9 = Button(frame, text="9", width=4, command=lambda: mostrarNumero("9"))
+boton9 = Button(frame, text="9", width=4,
+                command=lambda: mostrarNumero("9"), bg="#C8C8C8")
 boton9.grid(row=3, column=3, padx=2, pady=2)
 
 botonMult = Button(frame, text="x", width=4,
@@ -252,15 +264,16 @@ botonMult.grid(row=3, column=4, padx=2, pady=2)
 
 #
 
-boton0 = Button(frame, text="0", width=4, command=lambda: mostrarNumero("0"))
+boton0 = Button(frame, text="0", width=4,
+                command=lambda: mostrarNumero("0"), bg="#C8C8C8")
 boton0.grid(row=6, column=2, padx=2, pady=2)
 
 botonPunto = Button(frame, text=",", width=4,
                     command=lambda: mostrarNumero("."))
 botonPunto.grid(row=6, column=1, padx=2, pady=2)
 
-botonIgual = Button(frame, text="=", width=4,
+botonIgual = Button(frame, text="=", width=10,
                     command=lambda: accionBotonResultado())
-botonIgual.grid(row=6, column=3, padx=2, pady=2)
+botonIgual.grid(row=6, column=3, padx=2, pady=2, columnspan=2)
 
 raiz.mainloop()
