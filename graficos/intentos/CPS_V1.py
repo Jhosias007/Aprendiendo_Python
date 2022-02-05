@@ -1,8 +1,7 @@
-from cProfile import label
-from pydoc import cli
+from ast import Lambda
 from tkinter import *
 import time
-from turtle import color
+
 
 raiz = Tk()
 raiz.title("CPS TEST")
@@ -11,59 +10,54 @@ frame.pack()
 
 # ---------- Variables Globales ----------
 
+
 tiempoPasado = 0
 promedioClicksEnAccion = 0
 clicksFinales = 0
 promedioClicksEnAccion = 0
 tiempoLimite = 10
-dandoClicks = StringVar()
-dandoClicks.set("0")
+dandoClicks = 0
 
 # ---------- Funciones ----------
 
 
-def iniciarIntetno():
-    accionClick()
-    promedioClicks()
-    timerAccion()
-
-    if tiempoPasado == 10:
-        finalizarIntento()
-
-
 def finalizarIntento():
-    pass
+    botonPrincipal['state'] = DISABLED
+    botonPrincipal['text'] = "Se ha acabado el tiempo!"
 
 
-def timerAccion():
+def iniciarTimer():
     global tiempoPasado
     global tiempoLimite
 
-    while tiempoLimite < tiempoPasado:
-        time.sleep(1)
-        tiempoPasado += 1
+    while tiempoLimite > tiempoPasado:
+        # time.sleep(1)
+        for i in range(tiempoLimite):
+            tiempoPasado += 1
+            timer['text'] = tiempoPasado
+        if tiempoPasado == 10:
+            finalizarIntento()
 
 
-def sacarScore():
+def calcularScore():
     pass
 
 
-def promedioClicks():
+def calcularClicks():
     pass
 
 
-def accionClick():
+def aumentarClicks():
     global dandoClicks
-    
-
-    dandoClicks = int(dandoClicks) + 1
-    
+    dandoClicks += 1
+    # De este modo podemos variar el texto de un Label: label['text'] = "hola mundo"
+    clicksPS["text"] = dandoClicks
 
 # ---------- Botones ----------
 
 
 botonPrincipal = Button(frame, width=35, height=10,
-                        text="Click Para Empezar", command=lambda: [sacarScore(), accionClick()])
+                        text="Click Para Empezar", command=lambda: [aumentarClicks(), iniciarTimer()])
 botonPrincipal.grid(row=2, column=1, columnspan=3)
 
 botonReiniciar = Button(frame, width=35, height=2, text="Reiniciar")
@@ -76,13 +70,14 @@ titulo.grid(row=1, column=1, columnspan=3)
 
 # ---------- Labels Esadisticos ----------
 
-timer = Label(frame, width=10, height=2, text="Timer")
+timer = Label(frame, width=10, height=2, text=0)
 timer.grid(row=3, column=1)
 
-clicksPS = Label(frame, width=10, height=2, textvariable=dandoClicks, text=dandoClicks)
+clicksPS = Label(frame, width=10, height=2, text=0)
 clicksPS.grid(row=3, column=2)
 
 score = Label(frame, width=10, height=2, text="Score")
 score.grid(row=3, column=3)
+
 
 raiz.mainloop()
