@@ -22,21 +22,21 @@ dandoClicks = 0
 
 
 def finalizarIntento():
-    botonPrincipal['state'] = DISABLED
-    botonPrincipal['text'] = "Se ha acabado el tiempo!"
+    botonPrincipal.configure(text="El tiempo ha acabado!", state="disabled")
 
 
 def iniciarTimer():
     global tiempoPasado
     global tiempoLimite
 
-    while tiempoLimite > tiempoPasado:
-        # time.sleep(1)
-        for i in range(tiempoLimite):
-            tiempoPasado += 1
-            timer['text'] = tiempoPasado
-        if tiempoPasado == 10:
-            finalizarIntento()
+    tiempoPasado += 1
+    timer.configure(text=tiempoPasado)
+
+    if tiempoPasado == 10:
+        finalizarIntento()
+        raiz.after_cancel(iniciarTimer())
+
+    raiz.after(1000, iniciarTimer())
 
 
 def calcularScore():
