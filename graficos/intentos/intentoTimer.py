@@ -5,8 +5,8 @@ frame = Frame(raiz, width=200, height=400)
 frame.pack()
 
 comenzar = True
-tiempo = StringVar()
-tiempo.set("0")
+tiempo = IntVar()
+tiempo.set(0)
 
 # Funciones:
 
@@ -18,20 +18,16 @@ def aumentarContador():
     global comenzar
     global proceso
 
-    # botonPrincipal.configure()
+    if comenzar:
+        botonPrincipal.configure(state="active")
+        if tiempo.get() == 9:
+            comenzar = False
+            botonPrincipal.configure(text="Tiempo Acabado!", state="disabled")
+        tiempo.set(tiempo.get() + 1)
+        raiz.after(200, aumentarContador())
 
-    tiempo.set(int(tiempo.get()) + 1)
 
-    if tiempo.get() < 10:
-        raiz.after(100, aumentarContador())
-
-
-    if tiempo.get() == "10":
-        #comenzar = False
-        timer.after_cancel(aumentarContador())
-        botonPrincipal.configure(text="Se ha acabado el tiempo", state="disabled")
-
-    
+# Zona Botones
 
 botonPrincipal = Button(frame, width=30, height=5,
                         text="Click Aquí!", command=lambda: aumentarContador())
