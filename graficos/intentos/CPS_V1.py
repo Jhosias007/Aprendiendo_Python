@@ -1,4 +1,3 @@
-from ast import Lambda
 from tkinter import *
 import time
 
@@ -12,11 +11,12 @@ frame.pack()
 
 
 tiempoPasado = 0
-promedioClicksEnAccion = 0
-clicksFinales = 0
-promedioClicksEnAccion = 0
 tiempoLimite = 10
-dandoClicks = 0
+comenzarTimer = True
+
+infoTimer = IntVar()
+infoClicksPS = IntVar()
+infoScore = IntVar()
 
 # ---------- Funciones ----------
 
@@ -25,42 +25,60 @@ def finalizarIntento():
     botonPrincipal.configure(text="El tiempo ha acabado!", state="disabled")
 
 
-def iniciarTimer():
+def accionReinicar():
+    global tiempoPasado
+    global comenzarTimer
+
+    tiempoPasado = 0
+    comenzarTimer = False
+
+    infoTimer.set(0)
+    infoClicksPS.set(0)
+    infoScore.set(0)
+
+    botonPrincipal.configure(text="Click Para Empezar", state="normal")
+
+
+def iniciarTimer():  # Corregir el inicio en 1
     global tiempoPasado
     global tiempoLimite
+    global comenzarTimer
 
-    tiempoPasado += 1
-    timer.configure(text=tiempoPasado)
+    botonPrincipal.configure(
+        command=lambda: aumentarClicks(), text="Sigue Clickeando!")
 
-    if tiempoPasado == 10:
-        finalizarIntento()
-        raiz.after_cancel(iniciarTimer())
+    if comenzarTimer == True:
+        tiempoPasado += 1
+        infoTimer.set(infoTimer.get() + 1)
 
-    raiz.after(1000, iniciarTimer())
+        if tiempoPasado == tiempoLimite:
+            comenzarTimer = False
+            finalizarIntento()
+        raiz.after(1000, iniciarTimer)
 
 
-def calcularScore():
+def aumentarClicks():  # Acabado
+    infoScore.set(infoScore.get() + 1)
+
+
+def calcularScore():  # Terminar
     pass
 
 
-def calcularClicks():
-    pass
+def comenzarTiempo():
+    global comenzarTimer
+    comenzarTimer = True
+    botonPrincipal.configure(text="Click Para Empezar", state="normal")
 
-
-def aumentarClicks():
-    global dandoClicks
-    dandoClicks += 1
-    # De este modo podemos variar el texto de un Label: label['text'] = "hola mundo"
-    clicksPS["text"] = dandoClicks
 
 # ---------- Botones ----------
 
-
 botonPrincipal = Button(frame, width=35, height=10,
-                        text="Click Para Empezar", command=lambda: [aumentarClicks(), iniciarTimer()])
+                        text="Click Para Empezar", command=lambda: [aumentarClicks(), iniciarTimer(), calcularScore(), comenzarTiempo()])
 botonPrincipal.grid(row=2, column=1, columnspan=3)
 
-botonReiniciar = Button(frame, width=35, height=2, text="Reiniciar")
+botonReiniciar = Button(frame, width=35, height=2,
+                        text="Reiniciar", command=lambda: accionReinicar())
 botonReiniciar.grid(row=4, column=1, columnspan=3)
 
 # ---------- Labels ----------
@@ -70,13 +88,13 @@ titulo.grid(row=1, column=1, columnspan=3)
 
 # ---------- Labels Esadisticos ----------
 
-timer = Label(frame, width=10, height=2, text=0)
+timer = Label(frame, width=10, height=2, textvariable=infoTimer)
 timer.grid(row=3, column=1)
 
-clicksPS = Label(frame, width=10, height=2, text=0)
+clicksPS = Label(frame, width=10, height=2, textvariable=infoClicksPS)
 clicksPS.grid(row=3, column=2)
 
-score = Label(frame, width=10, height=2, text="Score")
+score = Label(frame, width=10, height=2, textvariable=infoScore)
 score.grid(row=3, column=3)
 
 
