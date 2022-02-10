@@ -1,5 +1,6 @@
 from tkinter import *
 import time
+from xml.dom.expatbuilder import theDOMImplementation
 
 
 raiz = Tk()
@@ -44,10 +45,11 @@ def iniciarTimer():  # Corregir el inicio en 1
     global tiempoLimite
     global comenzarTimer
 
-    botonPrincipal.configure(
-        command=lambda: aumentarClicks(), text="Sigue Clickeando!")
+    botonPrincipal.configure(command=lambda: aumentarClicks())
 
     if comenzarTimer == True:
+        botonPrincipal.configure(text="Sigue Clickeando!")
+
         tiempoPasado += 1
         infoTimer.set(infoTimer.get() + 1)
 
@@ -62,13 +64,17 @@ def aumentarClicks():  # Acabado
 
 
 def calcularScore():  # Terminar
-    pass
+    global tiempoLimite
+    global tiempoPasado
 
+    if tiempoLimite != tiempoPasado:
+        infoClicksPS.set(infoScore.get()/10)
+    
 
 def comenzarTiempo():
     global comenzarTimer
     comenzarTimer = True
-    botonPrincipal.configure(text="Click Para Empezar", state="normal")
+    botonPrincipal.configure(text="Sigue Clickeando!", state="normal")
 
 
 # ---------- Botones ----------
