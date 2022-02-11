@@ -169,6 +169,7 @@ def accionBotonResultado():
     global contadorResta
     global contadorMult
     global contadorDiv
+    global contadorResultado
 
     if operacion == "suma":
         numeroPantalla.set(resultado + float(numeroPantalla.get()))

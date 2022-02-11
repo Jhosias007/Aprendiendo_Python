@@ -1,7 +1,8 @@
 import pickle
 
+
 class Vehiculos():
-    def __init__(self, marca, modelo) -> None:
+    def __init__(self, marca, modelo):
         self.marca = marca
         self.modelo = modelo
         self.enMarcha = False
@@ -20,6 +21,7 @@ class Vehiculos():
     def estado(self):
         print("Marca:", self.marca, "\nModelo:", self.modelo, "\nEn Marcha:", self.enMarcha,
               "\nAcelerando:", self.acelera, "\nFrenando:", self.frena)
+
 
 coche1 = Vehiculos("Ferrari",  "M250")
 coche2 = Vehiculos("Nissan",  "F800")
@@ -43,4 +45,3 @@ obtenerCochesBinario.close()
 
 for i in obtenerListaCoches:
     print(i.estado())
-

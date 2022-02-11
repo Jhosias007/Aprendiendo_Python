@@ -1,7 +1,5 @@
 from tkinter import *
 import time
-from xml.dom.expatbuilder import theDOMImplementation
-
 
 raiz = Tk()
 raiz.title("CPS TEST")
@@ -12,7 +10,7 @@ frame.pack()
 
 
 tiempoPasado = 0
-tiempoLimite = 10
+tiempoLimite = 5
 comenzarTimer = True
 
 infoTimer = IntVar()
@@ -56,6 +54,7 @@ def iniciarTimer():  # Corregir el inicio en 1
         if tiempoPasado == tiempoLimite:
             comenzarTimer = False
             finalizarIntento()
+        calcularScore()
         raiz.after(1000, iniciarTimer)
 
 
@@ -67,11 +66,10 @@ def calcularScore():  # Terminar
     global tiempoLimite
     global tiempoPasado
 
-    if tiempoLimite != tiempoPasado:
-        infoClicksPS.set(infoScore.get()/10)
-    
+    infoClicksPS.set(infoScore.get()/10)
 
-def comenzarTiempo():
+
+def reComenzar():
     global comenzarTimer
     comenzarTimer = True
     botonPrincipal.configure(text="Sigue Clickeando!", state="normal")
@@ -80,7 +78,7 @@ def comenzarTiempo():
 # ---------- Botones ----------
 
 botonPrincipal = Button(frame, width=35, height=10,
-                        text="Click Para Empezar", command=lambda: [aumentarClicks(), iniciarTimer(), calcularScore(), comenzarTiempo()])
+                        text="Click Para Empezar", command=lambda: [aumentarClicks(), iniciarTimer(), reComenzar()])
 botonPrincipal.grid(row=2, column=1, columnspan=3)
 
 botonReiniciar = Button(frame, width=35, height=2,

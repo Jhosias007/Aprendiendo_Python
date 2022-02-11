@@ -2,52 +2,54 @@ from tkinter import *
 
 raiz = Tk()
 
-miFrame = Frame(raiz, width = 1200, height = 600)
+miFrame = Frame(raiz, width=1200, height=600)
 miFrame.pack()
 
 miNombre = StringVar()
 
-cuadroTexto = Entry(miFrame, textvariable = miNombre)
-cuadroTexto.grid(row = 0, column = 1, padx = 10, pady = 10)
+cuadroTexto = Entry(miFrame, textvariable=miNombre)
+cuadroTexto.grid(row=0, column=1, padx=10, pady=10)
 
 cuadroNombre = Entry(miFrame)
-cuadroNombre.grid(row = 1, column = 1, padx = 10, pady = 10)
+cuadroNombre.grid(row=1, column=1, padx=10, pady=10)
 
 cuadroDireccion = Entry(miFrame)
-cuadroDireccion.grid(row = 2, column = 1, padx = 10, pady = 10)
+cuadroDireccion.grid(row=2, column=1, padx=10, pady=10)
 
 cuadroPass = Entry(miFrame)
-cuadroPass.grid(row = 3, column = 1, padx = 10, pady = 10)
-cuadroPass.config(show = "*", fg = "red")
+cuadroPass.grid(row=3, column=1, padx=10, pady=10)
+cuadroPass.config(show="*", fg="red")
 
-textoComentario = Text(miFrame, width = 16, height = 5)
-textoComentario.grid(row = 4, column = 1, padx = 10, pady = 10)
+textoComentario = Text(miFrame, width=16, height=5)
+textoComentario.grid(row=4, column=1, padx=10, pady=10)
 
-srcollVert = Scrollbar(miFrame, command = textoComentario.yview)
-srcollVert.grid(row = 4, column = 2, sticky = "nsew")
-textoComentario.config(yscrollcommand = srcollVert.set, cursor = "crosshair", )
+srcollVert = Scrollbar(miFrame, command=textoComentario.yview)
+srcollVert.grid(row=4, column=2, sticky="nsew")
+textoComentario.config(yscrollcommand=srcollVert.set)
 
 
-nombreLabel = Label(miFrame, text = "Nombre: ")
-nombreLabel.grid(row = 0, column = 0, sticky = "e", padx = 10, pady = 10)
+nombreLabel = Label(miFrame, text="Nombre: ")
+nombreLabel.grid(row=0, column=0, sticky="e", padx=10, pady=10)
 
-apellidoLabel = Label(miFrame, text = "Apellido: ")
-apellidoLabel.grid(row = 1, column = 0, sticky = "e", padx = 10, pady = 10)
+apellidoLabel = Label(miFrame, text="Apellido: ")
+apellidoLabel.grid(row=1, column=0, sticky="e", padx=10, pady=10)
 
-direccionLabel = Label(miFrame, text = "Direccion: ")
-direccionLabel.grid(row = 2, column = 0, sticky = "e", padx = 10, pady = 10)
+direccionLabel = Label(miFrame, text="Direccion: ")
+direccionLabel.grid(row=2, column=0, sticky="e", padx=10, pady=10)
 
-direccionLabel = Label(miFrame, text = "Password: ")
-direccionLabel.grid(row = 3, column = 0, sticky = "e", padx = 10, pady = 10)
+direccionLabel = Label(miFrame, text="Password: ")
+direccionLabel.grid(row=3, column=0, sticky="e", padx=10, pady=10)
 
-comentariosLabel = Label(miFrame, text = "Comentarios: ")
-comentariosLabel.grid(row = 4, column = 0, sticky = "e", padx = 10, pady = 10)
+comentariosLabel = Label(miFrame, text="Comentarios: ")
+comentariosLabel.grid(row=4, column=0, sticky="e", padx=10, pady=10)
+
 
 def codigoBoton():
-	miNombre.set("Andre")
+    miNombre.set("Andre")
 
-botonEnviar = Button(raiz, text = "Enviar", command = codigoBoton)
-botonEnviar.pack(pady = 10)
+
+botonEnviar = Button(raiz, text="Enviar", command=codigoBoton)
+botonEnviar.pack(pady=10)
 
 raiz.mainloop()
 
