@@ -1,11 +1,9 @@
-from cgitb import text
-from distutils import command
 from tkinter import *
 
 root = Tk()
 root.title("Check Button")
 
-frame = Frame(root, width=20)
+frame = Frame(root)
 frame.pack()
 
 playa = IntVar()
@@ -37,8 +35,9 @@ Checkbutton(frame, text="Montaña", variable=montaña, onvalue=1,
 Checkbutton(frame, text="Turismo rural", variable=turismoRural,
             onvalue=1, offvalue=0, command=opcionesViaje).pack()
 
-textoFinal = Label(frame)
+textoFinal = Label(frame, width=35)
 textoFinal.pack()
+
 
 root.mainloop()
 # 12
