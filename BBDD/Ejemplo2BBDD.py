@@ -49,6 +49,7 @@ cursor.execute("DELETE FROM PRODUCTOS WHERE ID=5")
 conexion.commit()
 conexion.close()
 #46
+#https://www.youtube.com/watch?v=m_FzVf9JTV8&list=PLU8oAlHdN5BlvPxziopYZRd55pdqFwkeS&index=58
 
 """
 Campo Clave:
@@ -109,4 +110,7 @@ Campo Clave:
     Si hay 2 o mas "objetos" ocupando el mismo encabezado se borraran todos estos.
     Podemos indicarle otro encabezado y otro objeto que borrara cambiando lo que hay acontinuacion del "WHERE"
     
+
+TODO SE PUEDE COMPLICAR
+
 """
