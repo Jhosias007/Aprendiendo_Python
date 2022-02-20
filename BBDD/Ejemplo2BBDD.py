@@ -4,7 +4,7 @@ conexion = sqlite3.connect("GestionProductos")
 cursor = conexion.cursor()
 
 # CRUD - C - CREATE
-"""
+
 cursor.execute('''CREATE TABLE PRODUCTOS (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     NOMBRE_ARTICULO VARCHAR (50) UNIQUE,
@@ -21,7 +21,7 @@ productosLista = [
 
 cursor.executemany("INSERT INTO PRODUCTOS VALUES (NULL,?,?,?)", productosLista)
 cursor.execute("INSERT INTO PRODUCTOS VALUES ('AR05', 'tren', 15, 'jugueteria')")
-"""
+
 
 
 # CURD - R - READ
@@ -49,7 +49,7 @@ cursor.execute("DELETE FROM PRODUCTOS WHERE ID=5")
 conexion.commit()
 conexion.close()
 #46
-#https://www.youtube.com/watch?v=m_FzVf9JTV8&list=PLU8oAlHdN5BlvPxziopYZRd55pdqFwkeS&index=58
+
 
 """
 Campo Clave:
