@@ -1,9 +1,8 @@
-from asyncio.windows_events import NULL
-from threading import local
 from tkinter import *
 from tkinter import messagebox
 from tkinter import scrolledtext
 import sqlite3
+import os
 
 #  ---------- Funciones -----------------------------------------------------------------------------------
 
@@ -16,7 +15,7 @@ def conectarseFuncion():
     global cursor
     global coneccionBaseDatos
     try:
-        coneccionBaseDatos = sqlite3.connect("CRUD")
+        coneccionBaseDatos = sqlite3.connect("CRUD")      
         cursor = coneccionBaseDatos.cursor()
         cursor.execute('''CREATE TABLE DATOS_USUARIOS (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
