@@ -109,8 +109,7 @@ Campo Clave:
 
     Si hay 2 o mas "objetos" ocupando el mismo encabezado se borraran todos estos.
     Podemos indicarle otro encabezado y otro objeto que borrara cambiando lo que hay acontinuacion del "WHERE"
-    
 
-TODO SE PUEDE COMPLICAR
+# Todo se puede complicar
 
 """
