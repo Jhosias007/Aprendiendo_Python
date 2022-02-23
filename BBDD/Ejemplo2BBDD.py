@@ -20,8 +20,8 @@ productosLista = [
 ]
 
 cursor.executemany("INSERT INTO PRODUCTOS VALUES (NULL,?,?,?)", productosLista)
-cursor.execute("INSERT INTO PRODUCTOS VALUES ('AR05', 'tren', 15, 'jugueteria')")
-
+cursor.execute(
+    "INSERT INTO PRODUCTOS VALUES ('AR05', 'tren', 15, 'jugueteria')")
 
 
 # CURD - R - READ
@@ -48,7 +48,7 @@ cursor.execute("DELETE FROM PRODUCTOS WHERE ID=5")
 
 conexion.commit()
 conexion.close()
-#46
+# 46
 
 
 """
@@ -110,6 +110,5 @@ Campo Clave:
     Si hay 2 o mas "objetos" ocupando el mismo encabezado se borraran todos estos.
     Podemos indicarle otro encabezado y otro objeto que borrara cambiando lo que hay acontinuacion del "WHERE"
 
-# Todo se puede complicar
 
 """
