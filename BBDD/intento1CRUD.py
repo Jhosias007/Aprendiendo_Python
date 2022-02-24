@@ -53,19 +53,36 @@ def borrarFuncion():
 def crearFuncion():
     try:
         if idStringVar.get() == "":
-            conjuntoInfo = (str(nombreStringVar.get()), str(passwordStringVar.get()), str(apellidoStringVar.get()),
-                            str(direccionStringVar.get()), str(comentarioEntry.get("1.0", "end")))
+            conjuntoInfo = (
+                str(nombreStringVar.get()),
+                str(passwordStringVar.get()),
+                str(apellidoStringVar.get()),
+                str(direccionStringVar.get()),
+                str(comentarioEntry.get("1.0", "end"))
+            )
+
             cursor.execute('''
-            INSERT INTO DATOS_USUARIOS (ID, NOMBRE_USUARIO, PASSWORD, APELLIDO, DIRECCION, COMENTARIO) 
-            VALUES (NULL, ?, ?, ?, ?, ?)''', conjuntoInfo)
+                INSERT INTO DATOS_USUARIOS (ID, NOMBRE_USUARIO, PASSWORD, APELLIDO, DIRECCION, COMENTARIO) 
+                VALUES (NULL, ?, ?, ?, ?, ?)''', conjuntoInfo
+                           )
+
             messagebox.showinfo("Datos", "Se han cargado los datos en la base")
 
         else:
-            conjuntoInfo = (int(idStringVar.get()), str(nombreStringVar.get()), str(passwordStringVar.get()), str(apellidoStringVar.get()),
-                            str(direccionStringVar.get()), str(comentarioEntry.get("1.0", "end")))
+            conjuntoInfo = (
+                int(idStringVar.get()),
+                str(nombreStringVar.get()),
+                str(passwordStringVar.get()),
+                str(apellidoStringVar.get()),
+                str(direccionStringVar.get()),
+                str(comentarioEntry.get("1.0", "end"))
+            )
+
             cursor.execute('''
             INSERT INTO DATOS_USUARIOS (ID, NOMBRE_USUARIO, PASSWORD, APELLIDO, DIRECCION, COMENTARIO) 
-            VALUES (?, ?, ?, ?, ?, ?)''', conjuntoInfo)
+            VALUES (?, ?, ?, ?, ?, ?)''', conjuntoInfo
+                           )
+
             messagebox.showinfo("Datos", "Se han cargado los datos en la base")
 
         conexionBaseDatos.commit()
