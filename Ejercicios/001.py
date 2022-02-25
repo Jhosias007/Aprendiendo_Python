@@ -40,6 +40,7 @@ class App():
             self.root.destroy()
 
     def añadirAlumnoFuncion(self):
+
         self.rootAñadirAlumno = Tk()
 
         self.labelTituloAñadirAlumno = Label(
@@ -71,31 +72,43 @@ class App():
         self.buttonEnviarAñadirAlumno.grid(
             row=3, column=0, columnspan=2, padx=10, pady=10)
 
-#        self.infoAlumnoAñadir = (
-#            str(self.stringVarNombreAñadirAlumno.get()),
-#            str(self.stringVarNotaAñadirAlumno.get())
-#        )
-
         self.rootAñadirAlumno.mainloop()
 
     def guardarAlumnoFuncion(self):
 
-        self.infoAlumnoAñadir = (
-            str(self.stringVarNombreAñadirAlumno.get()),
-            str(self.stringVarNotaAñadirAlumno.get())
-        )
+        #        self.infoAlumnoAñadir = (
+        #            self.stringVarNombreAñadirAlumno.get(),
+        #            self.stringVarNotaAñadirAlumno.get()
+        #        )
 
-        print(self.infoAlumnoAñadir)
+        try:
+            if self.entryNombreAñadirAlumno.get().isalpha() == False:
+                messagebox.showerror(
+                    "Error", "No puedes colocar un numero u otros digitos en el nombre")
+                self.rootAñadirAlumno.mainloop()
 
-        self.conexion = sqlite3.connect("Base.db")
-        self.cursor = self.conexion.cursor()
-        self.cursor.execute('''
-            INSERT INTO ALUMNOS VALUES (NULL, ?, ?)''', self.infoAlumnoAñadir)
+            if self.entryNotaAñadirAlumno.get().isdigit() == False:
+                messagebox.showerror(
+                    "Error", "Debes colocar la nota en numeros")
+                self.rootAñadirAlumno.mainloop()
 
-        messagebox.showinfo("Alumno Añadido", "Se ha cargado el alumno")
+            self.infoAlumnoAñadir = (
+                str(self.entryNombreAñadirAlumno.get()),
+                int(self.entryNotaAñadirAlumno.get())
+            )
 
-        self.conexion.commit()
-        self.rootAñadirAlumno.destroy()
+            self.conexion = sqlite3.connect("Base.db")
+            self.cursor = self.conexion.cursor()
+            self.cursor.execute('''
+                INSERT INTO ALUMNOS VALUES (NULL, ?, ?)''', self.infoAlumnoAñadir)
+
+            messagebox.showinfo("Alumno Añadido", "Se ha cargado el alumno")
+
+            self.conexion.commit()
+            self.rootAñadirAlumno.destroy()
+
+        except:
+            pass
 
     def eliminarAlumnoFuncion(self):
         pass
@@ -119,7 +132,15 @@ class App():
         self.añadirAlumnoBoton.grid(row=self.varFila + 1)
         self.eliminarAlumnoBoton.grid(row=self.varFila + 1)
 
-    # * Funciones - Ventana
+    # * Funciones - Ayuda
+
+    def funcionLicencia(self):
+        messagebox.showinfo("Licencia", "La licencia es mia, XD")
+
+    def funcionAcercaDe(self):
+        messagebox.showinfo("Acerca De", "Programa hecho por mi en este año")
+
+    # * Funciones - Generar Ventana
 
     def generarMenu(self):
         self.menu = Menu(self.root)
@@ -142,8 +163,8 @@ class App():
         self.alumnos.add_command(label="Ver Desaprobados")
 
         self.ayuda = Menu(self.menu, tearoff=False)
-        self.ayuda.add_command(label="Licencia")
-        self.ayuda.add_command(label="Acerca De")
+        self.ayuda.add_command(label="Licencia", command=lambda: self.funcionLicencia())
+        self.ayuda.add_command(label="Acerca De", command=lambda: self.funcionAcercaDe())
 
         self.menu.add_cascade(menu=self.archivo, label="Archivo")
         self.menu.add_cascade(menu=self.alumnos, label="Alumnos")
