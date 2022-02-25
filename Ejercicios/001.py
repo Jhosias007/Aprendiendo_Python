@@ -1,6 +1,6 @@
 from tkinter import *
-import sqlite3
 from tkinter import messagebox
+import sqlite3
 
 
 class App():
@@ -26,6 +26,9 @@ class App():
                 NOMBRE VARCHAR (50),
                 NOTA INTEGER
             )''')
+
+            messagebox.showinfo(
+                "Conexion", "Te has conectado a la Base de Datos exitosamente")
 
         except sqlite3.OperationalError:
             messagebox.showerror(
@@ -75,57 +78,74 @@ class App():
         self.rootAñadirAlumno.mainloop()
 
     def guardarAlumnoFuncion(self):
+        # try:
+        if self.entryNombreAñadirAlumno.get().isalpha() == False:
+            messagebox.showerror(
+                "Error", "No puedes colocar un numero u otros digitos en el nombre")
+            self.rootAñadirAlumno.mainloop()
 
-        #        self.infoAlumnoAñadir = (
-        #            self.stringVarNombreAñadirAlumno.get(),
-        #            self.stringVarNotaAñadirAlumno.get()
-        #        )
+        if self.entryNotaAñadirAlumno.get().isdigit() == False:
+            messagebox.showerror(
+                "Error", "Debes colocar la nota en numeros")
+            self.rootAñadirAlumno.mainloop()
 
-        try:
-            if self.entryNombreAñadirAlumno.get().isalpha() == False:
-                messagebox.showerror(
-                    "Error", "No puedes colocar un numero u otros digitos en el nombre")
-                self.rootAñadirAlumno.mainloop()
+        self.infoAlumnoAñadir = (
+            str(self.entryNombreAñadirAlumno.get()),
+            int(self.entryNotaAñadirAlumno.get())
+        )
 
-            if self.entryNotaAñadirAlumno.get().isdigit() == False:
-                messagebox.showerror(
-                    "Error", "Debes colocar la nota en numeros")
-                self.rootAñadirAlumno.mainloop()
-
-            self.infoAlumnoAñadir = (
-                str(self.entryNombreAñadirAlumno.get()),
-                int(self.entryNotaAñadirAlumno.get())
-            )
-
-            self.conexion = sqlite3.connect("Base.db")
-            self.cursor = self.conexion.cursor()
-            self.cursor.execute('''
+        self.conexion = sqlite3.connect("Base.db")
+        self.cursor = self.conexion.cursor()
+        self.cursor.execute('''
                 INSERT INTO ALUMNOS VALUES (NULL, ?, ?)''', self.infoAlumnoAñadir)
 
-            messagebox.showinfo("Alumno Añadido", "Se ha cargado el alumno")
+        self.cursor.execute("SELECT ID FROM ALUMNOS")
+        self.capturarID = self.cursor.fetchall()
+        self.ultimoID = str(self.capturarID.pop())
 
-            self.conexion.commit()
-            self.rootAñadirAlumno.destroy()
+        self.ultimoID = self.ultimoID.replace("(", "")
+        self.ultimoID = self.ultimoID.replace(")", "")
+        self.ultimoID = self.ultimoID.replace(",", "")
 
-        except:
-            pass
+        self.conexion.commit()
+        self.rootAñadirAlumno.destroy()
+
+        messagebox.showinfo(
+            "Alumno Añadido", "Se ha cargado el alumno con ID: " + self.ultimoID)
+
+        self.idAMostrar = "id_" + self.ultimoID + "_Label"
+        self.nombreAMostrar = "nombre_" + self.infoAlumnoAñadir[0] + "_Nombre"
+        self.notaAMostrar = "nota_" + str(self.infoAlumnoAñadir[1]) + "_Nota"
+        self.varFila = 2    # Este es el lugar inicial en donde se colocaran la informacion en la funcion
+                            # añadirAlumnoAApp()
+
+        self.añadirAlumnoAApp(
+            self.ultimoID,
+            self.infoAlumnoAñadir[0],
+            self.infoAlumnoAñadir[1],
+            self.idAMostrar,
+            self.nombreAMostrar,
+            self.notaAMostrar,
+            self.varFila
+        )
 
     def eliminarAlumnoFuncion(self):
         pass
 
-    def añadirAlumnoAApp(self, nombre, nota, principalLabel, nombreLabel, notaLabel):
-        self.varFila = 2
+    def añadirAlumnoAApp(self, id, nombre, nota, idLabel, nombreLabel, notaLabel, varFila):
 
-        principalLabel = Label(self.root, text="Alumno:")
-        principalLabel.grid(row=self.varFila, column=0, padx=10, pady=10)
+        idLabel_ = idLabel
+        nombreLabel_ = nombreLabel
+        notaLabel_ = notaLabel
 
-        nombreLabel = Label(self.root, text=nombre)
-        nombreLabel.grid(
-            row=self.varFila, column=1, padx=10, pady=10)
+        idLabel_ = Label(self.root, text=id)
+        idLabel_.grid(row=varFila, column=0, padx=10, pady=10)
 
-        notaLabel = Label(self.root, text=nota)
-        notaLabel.grid(
-            row=self.varFila, column=2, padx=10, pady=10)
+        nombreLabel_ = Label(self.root, text=nombre)
+        nombreLabel_.grid(row=varFila, column=1, padx=10, pady=10)
+
+        notaLabel_ = Label(self.root, text=nota)
+        notaLabel_.grid(row=varFila, column=2, padx=10, pady=10)
 
         self.varFila += 1
 
@@ -163,8 +183,10 @@ class App():
         self.alumnos.add_command(label="Ver Desaprobados")
 
         self.ayuda = Menu(self.menu, tearoff=False)
-        self.ayuda.add_command(label="Licencia", command=lambda: self.funcionLicencia())
-        self.ayuda.add_command(label="Acerca De", command=lambda: self.funcionAcercaDe())
+        self.ayuda.add_command(
+            label="Licencia", command=lambda: self.funcionLicencia())
+        self.ayuda.add_command(
+            label="Acerca De", command=lambda: self.funcionAcercaDe())
 
         self.menu.add_cascade(menu=self.archivo, label="Archivo")
         self.menu.add_cascade(menu=self.alumnos, label="Alumnos")
@@ -179,8 +201,8 @@ class App():
         # * Label Encabezado
         self.varFila = 1
 
-        self.labelAlumno = Label(self.root, text="Alumno:")
-        self.labelAlumno.grid(row=self.varFila, column=0, padx=10, pady=10)
+        self.labelID = Label(self.root, text="ID Alumno:")
+        self.labelID.grid(row=self.varFila, column=0, padx=10, pady=10)
 
         self.labelNombreAlumno = Label(self.root, text="Nombre")
         self.labelNombreAlumno.grid(
