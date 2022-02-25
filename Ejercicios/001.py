@@ -116,8 +116,9 @@ class App():
         self.idAMostrar = "id_" + self.ultimoID + "_Label"
         self.nombreAMostrar = "nombre_" + self.infoAlumnoAñadir[0] + "_Nombre"
         self.notaAMostrar = "nota_" + str(self.infoAlumnoAñadir[1]) + "_Nota"
-        self.varFila = 2    # Este es el lugar inicial en donde se colocaran la informacion en la funcion
-                            # añadirAlumnoAApp()
+        # Este es el lugar inicial en donde se colocaran la informacion en la funcion
+        self.varFila = 2
+        # añadirAlumnoAApp()
 
         self.añadirAlumnoAApp(
             self.ultimoID,
@@ -130,7 +131,43 @@ class App():
         )
 
     def eliminarAlumnoFuncion(self):
-        pass
+        self.rootEliminarAlumno = Tk()
+        self.rootEliminarAlumno.title("Eliminar Alumno")
+
+        self.tituloEliminarAlumno = Label(
+            self.rootEliminarAlumno, text="Eliminar Alumno")
+        self.tituloEliminarAlumno.grid(
+            row=0, column=0, columnspan=2, padx=10, pady=10)
+
+        self.idAlumnoBorrarLabel = Label(
+            self.rootEliminarAlumno, text="ID Del Alumno")
+        self.idAlumnoBorrarLabel.grid(row=1, column=0, padx=10, pady=10)
+
+        self.idAlumnoBorrarStringVar = StringVar()
+        self.idAlumnoBorrarEntry = Entry(
+            self.rootEliminarAlumno, textvariable=self.idAlumnoBorrarStringVar)
+        self.idAlumnoBorrarEntry.grid(row=1, column=1, padx=10, pady=10)
+
+        self.idAlumnoBorrarBoton = Button(
+            self.rootEliminarAlumno, text="Aceptar", width=13, command=lambda: self.eliminarAlumno())
+        self.idAlumnoBorrarBoton.grid(
+            row=2, column=0, columnspan=2, padx=10, pady=10)
+
+    def eliminarAlumno(self):
+        self.idObtenidoABorrar = (int(self.idAlumnoBorrarEntry.get()), )
+
+        # * Me conecto a la base (otra vez)
+        self.conexion = sqlite3.connect("Base.db")
+        self.cursor = self.conexion.cursor()
+
+        self.cursor.execute("DELETE FROM ALUMNOS WHERE ID=?",
+                            self.idObtenidoABorrar)
+        self.conexion.commit()
+
+        self.rootEliminarAlumno.destroy()
+
+        messagebox.showinfo(
+            "Base de Datos", "El alumno se ha eliminado exitosamente")
 
     def añadirAlumnoAApp(self, id, nombre, nota, idLabel, nombreLabel, notaLabel, varFila):
 
