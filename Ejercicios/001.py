@@ -65,28 +65,40 @@ class App():
         self.entryNotaAñadirAlumno.grid(row=2, column=1, padx=10, pady=10)
 
         self.buttonEnviarAñadirAlumno = Button(
-            self.rootAñadirAlumno, text="Guardar Alumno", command=lambda: self.capturarDatosAñadirAlumno())
+            self.rootAñadirAlumno, text="Guardar Alumno", command=lambda: self.guardarAlumnoFuncion()
+        )
+
         self.buttonEnviarAñadirAlumno.grid(
             row=3, column=0, columnspan=2, padx=10, pady=10)
 
+#        self.infoAlumnoAñadir = (
+#            str(self.stringVarNombreAñadirAlumno.get()),
+#            str(self.stringVarNotaAñadirAlumno.get())
+#        )
+
         self.rootAñadirAlumno.mainloop()
 
-    def eliminarAlumnoFuncion(self):
-        pass
+    def guardarAlumnoFuncion(self):
 
-    def capturarDatosAñadirAlumno(self):
-        infoAlumnoAñadir = (
-            self.stringVarNombreAñadirAlumno.get(),
-            self.stringVarNotaAñadirAlumno.get()
+        self.infoAlumnoAñadir = (
+            str(self.stringVarNombreAñadirAlumno.get()),
+            str(self.stringVarNotaAñadirAlumno.get())
         )
+
+        print(self.infoAlumnoAñadir)
 
         self.conexion = sqlite3.connect("Base.db")
         self.cursor = self.conexion.cursor()
         self.cursor.execute('''
-            INSERT INTO ALUMNOS VALUES (NULL, ?, ?)''', infoAlumnoAñadir)
+            INSERT INTO ALUMNOS VALUES (NULL, ?, ?)''', self.infoAlumnoAñadir)
+
+        messagebox.showinfo("Alumno Añadido", "Se ha cargado el alumno")
 
         self.conexion.commit()
         self.rootAñadirAlumno.destroy()
+
+    def eliminarAlumnoFuncion(self):
+        pass
 
     def añadirAlumnoAApp(self, nombre, nota, principalLabel, nombreLabel, notaLabel):
         self.varFila = 2
