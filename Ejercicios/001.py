@@ -14,6 +14,9 @@ class App():
         self.generarPlantilla()
         self.root.mainloop()
 
+        # ? Variables
+        self.varConectarseBool = False
+
     # * Funciones - Menu
 
     def funcionConectarseMenu(self):
@@ -26,6 +29,7 @@ class App():
                 NOMBRE VARCHAR (50),
                 NOTA INTEGER
             )''')
+            self.varConectarseBool = True
 
             messagebox.showinfo(
                 "Conexion", "Te has conectado a la Base de Datos exitosamente")
@@ -124,10 +128,6 @@ class App():
             self.ultimoID,
             self.infoAlumnoAñadir[0],
             self.infoAlumnoAñadir[1],
-            self.idAMostrar,
-            self.nombreAMostrar,
-            self.notaAMostrar,
-            self.varFila
         )
 
     def eliminarAlumnoFuncion(self):
@@ -154,11 +154,24 @@ class App():
             row=2, column=0, columnspan=2, padx=10, pady=10)
 
     def eliminarAlumno(self):
-        self.idObtenidoABorrar = (int(self.idAlumnoBorrarEntry.get()), )
 
         # * Me conecto a la base (otra vez)
         self.conexion = sqlite3.connect("Base.db")
         self.cursor = self.conexion.cursor()
+
+        # * Obtener Datos para saber si el ID ingresado existe
+
+        self.cursor.execute("SELECT ID FROM ALUMNOS")
+        self.verificarIdExisteParaBorrar = self.cursor.fetchall()
+
+        # * Recorrer la lista self.verificarIdExisteParaBorrar para ver si existe el id ingresado
+        # * Corregir
+
+#        if self.verificarIdExisteParaBorrar.__contains__(int(self.idAlumnoBorrarEntry.get())) == False:
+#            messagebox.showerror("ID", "El ID ingresado no existe")
+#            self.rootEliminarAlumno.mainloop()
+
+        self.idObtenidoABorrar = (int(self.idAlumnoBorrarEntry.get()), )
 
         self.cursor.execute("DELETE FROM ALUMNOS WHERE ID=?",
                             self.idObtenidoABorrar)
@@ -169,25 +182,33 @@ class App():
         messagebox.showinfo(
             "Base de Datos", "El alumno se ha eliminado exitosamente")
 
-    def añadirAlumnoAApp(self, id, nombre, nota, idLabel, nombreLabel, notaLabel, varFila):
+    def añadirAlumnoAApp(self, id, nombre, nota):
+        try:
+            # Me conecto a la base (otra vez)
+            self.conexion = sqlite3.connect("Base.db")
+            self.cursor = self.conexion.cursor()
 
-        idLabel_ = idLabel
-        nombreLabel_ = nombreLabel
-        notaLabel_ = notaLabel
+            # Captura de datos
 
-        idLabel_ = Label(self.root, text=id)
-        idLabel_.grid(row=varFila, column=0, padx=10, pady=10)
+            self.cursor.execute("SELECT ID FROM ALUMNOS")
+            self.cargarIdListaParaPosicionar = self.cursor.fetchall()
 
-        nombreLabel_ = Label(self.root, text=nombre)
-        nombreLabel_.grid(row=varFila, column=1, padx=10, pady=10)
+            self.varFila = str(self.cargarIdListaParaPosicionar.pop())
+            self.varFila = self.varFila.replace("(", "")
+            self.varFila = self.varFila.replace(")", "")
+            self.varFila = self.varFila.replace(",", "")
 
-        notaLabel_ = Label(self.root, text=nota)
-        notaLabel_.grid(row=varFila, column=2, padx=10, pady=10)
+            self.varFila = int(self.varFila)
 
-        self.varFila += 1
+            Label(self.root, text=id).grid(row=self.varFila, column=0)
+            Label(self.root, text=nombre).grid(row=self.varFila, column=1)
+            Label(self.root, text=nota).grid(row=self.varFila, column=2)
 
-        self.añadirAlumnoBoton.grid(row=self.varFila + 1)
-        self.eliminarAlumnoBoton.grid(row=self.varFila + 1)
+            self.añadirAlumnoBoton.grid(row=self.varFila + 1)
+            self.eliminarAlumnoBoton.grid(row=self.varFila + 1)
+
+        except TclError:
+            pass
 
     # * Funciones - Ayuda
 
@@ -230,26 +251,66 @@ class App():
         self.menu.add_cascade(menu=self.ayuda, label="Ayuda")
 
     def generarPlantilla(self):
-
+        # ! CORREGIR - Hacer que cargue los datos de la base cuando se inicie el programa
         # * Labels
         self.labelTitulo = Label(self.root, text="ALUMNOS")
         self.labelTitulo.grid(row=0, column=1)
 
         # * Label Encabezado
-        self.varFila = 1
 
         self.labelID = Label(self.root, text="ID Alumno:")
-        self.labelID.grid(row=self.varFila, column=0, padx=10, pady=10)
+        self.labelID.grid(row=1, column=0, padx=10, pady=10)
 
         self.labelNombreAlumno = Label(self.root, text="Nombre")
-        self.labelNombreAlumno.grid(
-            row=self.varFila, column=1, padx=10, pady=10)
+        self.labelNombreAlumno.grid(row=1, column=1, padx=10, pady=10)
 
         self.labelNotaAlumno = Label(self.root, text="Nota")
-        self.labelNotaAlumno.grid(
-            row=self.varFila, column=2, padx=10, pady=10)
+        self.labelNotaAlumno.grid(row=1, column=2, padx=10, pady=10)
 
-        self.varFila += 1
+        # * Cargar datos de la base a la app
+
+        # Me conecto a la base (otra vez)
+        self.conexion = sqlite3.connect("Base.db")
+        self.cursor = self.conexion.cursor()
+
+        # Captura de datos
+
+        self.cursor.execute("SELECT ID FROM ALUMNOS")
+        self.cargarIDLista = self.cursor.fetchall()
+
+        self.cursor.execute("SELECT NOMBRE FROM ALUMNOS")
+        self.cargarNombreLista = self.cursor.fetchall()
+
+        self.cursor.execute("SELECT NOTA FROM ALUMNOS")
+        self.cargarNotaLista = self.cursor.fetchall()
+
+        # Aqui creo un label a cada vuelta de bucle que se recorre de la lista capturada con el fetchall
+        
+        self.varFila = 2
+
+        for id in self.cargarIDLista:
+            Label(self.root, text=id).grid(
+                row=self.varFila, column=0, padx=3, pady=3)
+
+            self.varFila += 1
+
+        self.varFila = 2
+
+        for nombre in self.cargarNombreLista:
+            Label(self.root, text=nombre).grid(
+                row=self.varFila, column=1, padx=3, pady=3)
+            
+            self.varFila += 1
+
+        self.varFila = 2
+
+        for nota in self.cargarNotaLista:
+            Label(self.root, text=nota).grid(
+                row=self.varFila, column=2, padx=3, pady=3)
+
+            self.varFila += 1
+
+        # Cargar los encabezados por partes, primero el id, luego el nombre y la nota al final
 
         # * Buttons
 
@@ -265,3 +326,5 @@ class App():
 
 
 miApp = App()
+
+# ! CODIGO SPAGETIIIIIIIIIIIII
