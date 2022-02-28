@@ -198,7 +198,7 @@ class App():
             self.varFila = self.varFila.replace(")", "")
             self.varFila = self.varFila.replace(",", "")
 
-            self.varFila = int(self.varFila)
+            self.varFila = int(self.varFila) + 2
 
             Label(self.root, text=id).grid(row=self.varFila, column=0)
             Label(self.root, text=nombre).grid(row=self.varFila, column=1)
@@ -326,5 +326,3 @@ class App():
 
 
 miApp = App()
-
-# ! CODIGO SPAGETIIIIIIIIIIIII
