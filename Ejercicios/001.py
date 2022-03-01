@@ -46,7 +46,8 @@ class App():
         if self.cerrarApp == YES:
             self.root.destroy()
 
-    def añadirAlumnoFuncion(self):
+    # * Funciones de añadir alumno
+    def añadirAlumnoRoot(self):
 
         self.rootAñadirAlumno = Tk()
 
@@ -73,7 +74,7 @@ class App():
         self.entryNotaAñadirAlumno.grid(row=2, column=1, padx=10, pady=10)
 
         self.buttonEnviarAñadirAlumno = Button(
-            self.rootAñadirAlumno, text="Guardar Alumno", command=lambda: self.guardarAlumnoFuncion()
+            self.rootAñadirAlumno, text="Guardar Alumno", command=lambda: self.guardarAlumnoEnBase()
         )
 
         self.buttonEnviarAñadirAlumno.grid(
@@ -81,7 +82,7 @@ class App():
 
         self.rootAñadirAlumno.mainloop()
 
-    def guardarAlumnoFuncion(self):
+    def guardarAlumnoEnBase(self):
         # try:
         if self.entryNombreAñadirAlumno.get().isalpha() == False:
             messagebox.showerror(
@@ -90,7 +91,15 @@ class App():
 
         if self.entryNotaAñadirAlumno.get().isdigit() == False:
             messagebox.showerror(
-                "Error", "Debes colocar la nota en numeros")
+                "Error", "Solo debes colocar numeros en la nota")
+            self.rootAñadirAlumno.mainloop()
+
+        if int(self.entryNotaAñadirAlumno.get()) < 0:
+            messagebox.showerror("Nota", "No puedes colocar numeros negativos")
+            self.rootAñadirAlumno.mainloop()
+
+        if int(self.entryNotaAñadirAlumno.get()) > 20:
+            messagebox.showerror("Nota", "El limite de la nota es 20")
             self.rootAñadirAlumno.mainloop()
 
         self.infoAlumnoAñadir = (
@@ -122,67 +131,15 @@ class App():
         self.notaAMostrar = "nota_" + str(self.infoAlumnoAñadir[1]) + "_Nota"
         # Este es el lugar inicial en donde se colocaran la informacion en la funcion
         self.varFila = 2
-        # añadirAlumnoAApp()
+        # mostrarAlumnoAñadido()
 
-        self.añadirAlumnoAApp(
+        self.mostrarAlumnoAñadido(
             self.ultimoID,
             self.infoAlumnoAñadir[0],
             self.infoAlumnoAñadir[1],
         )
-
-    def eliminarAlumnoFuncion(self):
-        self.rootEliminarAlumno = Tk()
-        self.rootEliminarAlumno.title("Eliminar Alumno")
-
-        self.tituloEliminarAlumno = Label(
-            self.rootEliminarAlumno, text="Eliminar Alumno")
-        self.tituloEliminarAlumno.grid(
-            row=0, column=0, columnspan=2, padx=10, pady=10)
-
-        self.idAlumnoBorrarLabel = Label(
-            self.rootEliminarAlumno, text="ID Del Alumno")
-        self.idAlumnoBorrarLabel.grid(row=1, column=0, padx=10, pady=10)
-
-        self.idAlumnoBorrarStringVar = StringVar()
-        self.idAlumnoBorrarEntry = Entry(
-            self.rootEliminarAlumno, textvariable=self.idAlumnoBorrarStringVar)
-        self.idAlumnoBorrarEntry.grid(row=1, column=1, padx=10, pady=10)
-
-        self.idAlumnoBorrarBoton = Button(
-            self.rootEliminarAlumno, text="Aceptar", width=13, command=lambda: self.eliminarAlumno())
-        self.idAlumnoBorrarBoton.grid(
-            row=2, column=0, columnspan=2, padx=10, pady=10)
-
-    def eliminarAlumno(self):
-
-        # * Me conecto a la base (otra vez)
-        self.conexion = sqlite3.connect("Base.db")
-        self.cursor = self.conexion.cursor()
-
-        # * Obtener Datos para saber si el ID ingresado existe
-
-        self.cursor.execute("SELECT ID FROM ALUMNOS")
-        self.verificarIdExisteParaBorrar = self.cursor.fetchall()
-
-        # * Recorrer la lista self.verificarIdExisteParaBorrar para ver si existe el id ingresado
-        # * Corregir
-
-#        if self.verificarIdExisteParaBorrar.__contains__(int(self.idAlumnoBorrarEntry.get())) == False:
-#            messagebox.showerror("ID", "El ID ingresado no existe")
-#            self.rootEliminarAlumno.mainloop()
-
-        self.idObtenidoABorrar = (int(self.idAlumnoBorrarEntry.get()), )
-
-        self.cursor.execute("DELETE FROM ALUMNOS WHERE ID=?",
-                            self.idObtenidoABorrar)
-        self.conexion.commit()
-
-        self.rootEliminarAlumno.destroy()
-
-        messagebox.showinfo(
-            "Base de Datos", "El alumno se ha eliminado exitosamente")
-
-    def añadirAlumnoAApp(self, id, nombre, nota):
+    
+    def mostrarAlumnoAñadido(self, id, nombre, nota):
         try:
             # Me conecto a la base (otra vez)
             self.conexion = sqlite3.connect("Base.db")
@@ -205,13 +162,68 @@ class App():
             Label(self.root, text=nota).grid(row=self.varFila, column=2)
 
             self.añadirAlumnoBoton.grid(row=self.varFila + 1)
-            self.eliminarAlumnoBoton.grid(row=self.varFila + 1)
+            self.eliminarAlumnoDeBaseBoton.grid(row=self.varFila + 1)
 
         except TclError:
             pass
 
-    # * Funciones - Ayuda
+    # * Funciones de eliminar alumno
+    def eliminarAlumnoRoot(self):
+        self.rooteliminarAlumnoDeBase = Tk()
+        self.rooteliminarAlumnoDeBase.title("Eliminar Alumno")
 
+        self.tituloeliminarAlumnoDeBase = Label(
+            self.rooteliminarAlumnoDeBase, text="Eliminar Alumno")
+        self.tituloeliminarAlumnoDeBase.grid(
+            row=0, column=0, columnspan=2, padx=10, pady=10)
+
+        self.idAlumnoBorrarLabel = Label(
+            self.rooteliminarAlumnoDeBase, text="ID Del Alumno")
+        self.idAlumnoBorrarLabel.grid(row=1, column=0, padx=10, pady=10)
+
+        self.idAlumnoBorrarStringVar = StringVar()
+        self.idAlumnoBorrarEntry = Entry(
+            self.rooteliminarAlumnoDeBase, textvariable=self.idAlumnoBorrarStringVar)
+        self.idAlumnoBorrarEntry.grid(row=1, column=1, padx=10, pady=10)
+
+        self.idAlumnoBorrarBoton = Button(
+            self.rooteliminarAlumnoDeBase, text="Aceptar", width=13, command=lambda: self.eliminarAlumnoDeBase())
+        self.idAlumnoBorrarBoton.grid(
+            row=2, column=0, columnspan=2, padx=10, pady=10)
+
+    def eliminarAlumnoDeBase(self):
+
+        # * Me conecto a la base (otra vez)
+        self.conexion = sqlite3.connect("Base.db")
+        self.cursor = self.conexion.cursor()
+
+        # * Obtener Datos para saber si el ID ingresado existe
+
+        self.cursor.execute("SELECT ID FROM ALUMNOS")
+        self.verificarIdExisteParaBorrar = self.cursor.fetchall()
+
+        # * Recorrer la lista self.verificarIdExisteParaBorrar para ver si existe el id ingresado
+        # * Corregir
+
+#        if self.verificarIdExisteParaBorrar.__contains__(int(self.idAlumnoBorrarEntry.get())) == False:
+#            messagebox.showerror("ID", "El ID ingresado no existe")
+#            self.rooteliminarAlumnoDeBase.mainloop()
+
+        self.idObtenidoABorrar = (int(self.idAlumnoBorrarEntry.get()), )
+
+        self.cursor.execute("DELETE FROM ALUMNOS WHERE ID=?",
+                            self.idObtenidoABorrar)
+        self.conexion.commit()
+
+        self.rooteliminarAlumnoDeBase.destroy()
+
+        messagebox.showinfo(
+            "Base de Datos", "El alumno se ha eliminado exitosamente")
+
+    def eliminarAlumnoDeApp(self):
+        pass
+
+    # * Funciones - Ayuda
     def funcionLicencia(self):
         messagebox.showinfo("Licencia", "La licencia es mia, XD")
 
@@ -219,7 +231,6 @@ class App():
         messagebox.showinfo("Acerca De", "Programa hecho por mi en este año")
 
     # * Funciones - Generar Ventana
-
     def generarMenu(self):
         self.menu = Menu(self.root)
         self.root.config(menu=self.menu)
@@ -233,9 +244,9 @@ class App():
 
         self.alumnos = Menu(self.menu, tearoff=False)
         self.alumnos.add_command(
-            label="Agregar Alumno", command=lambda: self.añadirAlumnoFuncion())
+            label="Agregar Alumno", command=lambda: self.añadirAlumnoRoot())
         self.alumnos.add_command(
-            label="Eliminar Alumno", command=lambda: self.eliminarAlumnoFuncion())
+            label="Eliminar Alumno", command=lambda: self.eliminarAlumnoRoot())
         self.alumnos.add_separator()
         self.alumnos.add_command(label="Ver Aprobados")
         self.alumnos.add_command(label="Ver Desaprobados")
@@ -251,7 +262,6 @@ class App():
         self.menu.add_cascade(menu=self.ayuda, label="Ayuda")
 
     def generarPlantilla(self):
-        # ! CORREGIR - Hacer que cargue los datos de la base cuando se inicie el programa
         # * Labels
         self.labelTitulo = Label(self.root, text="ALUMNOS")
         self.labelTitulo.grid(row=0, column=1)
@@ -274,6 +284,12 @@ class App():
         self.cursor = self.conexion.cursor()
 
         # Captura de datos
+
+        self.cursor.execute('''CREATE TABLE IF NOT EXISTS ALUMNOS (
+                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                NOMBRE VARCHAR (50),
+                NOTA INTEGER
+            )''')
 
         self.cursor.execute("SELECT ID FROM ALUMNOS")
         self.cargarIDLista = self.cursor.fetchall()
@@ -315,13 +331,13 @@ class App():
         # * Buttons
 
         self.añadirAlumnoBoton = Button(
-            self.root, text="Añadir Alumno", command=lambda: self.añadirAlumnoFuncion())
+            self.root, text="Añadir Alumno", command=lambda: self.añadirAlumnoRoot())
         self.añadirAlumnoBoton.grid(
             row=self.varFila, column=0, padx=10, pady=10)
 
-        self.eliminarAlumnoBoton = Button(
-            self.root, text="Eliminar Alumno", command=lambda: self.eliminarAlumnoFuncion())
-        self.eliminarAlumnoBoton.grid(
+        self.eliminarAlumnoDeBaseBoton = Button(
+            self.root, text="Eliminar Alumno", command=lambda: self.eliminarAlumnoRoot())
+        self.eliminarAlumnoDeBaseBoton.grid(
             row=self.varFila, column=2, padx=10, pady=10)
 
 
