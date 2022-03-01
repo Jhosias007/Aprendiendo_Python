@@ -126,6 +126,8 @@ class App():
         messagebox.showinfo(
             "Alumno Añadido", "Se ha cargado el alumno con ID: " + self.ultimoID)
 
+        # * Comienzo a declarar variables para almacenar los labels
+
         self.idAMostrar = "id_" + self.ultimoID + "_Label"
         self.nombreAMostrar = "nombre_" + self.infoAlumnoAñadir[0] + "_Nombre"
         self.notaAMostrar = "nota_" + str(self.infoAlumnoAñadir[1]) + "_Nota"
@@ -138,7 +140,7 @@ class App():
             self.infoAlumnoAñadir[0],
             self.infoAlumnoAñadir[1],
         )
-    
+
     def mostrarAlumnoAñadido(self, id, nombre, nota):
         try:
             # Me conecto a la base (otra vez)
@@ -157,12 +159,32 @@ class App():
 
             self.varFila = int(self.varFila) + 2
 
+            # * Creacion de variables para los labels
+
+                        
+            # * Variables para la funcion guardarAlumnosEnBase()
+
+            """
+            if darAcceso == 1:
+                self.inicialLabel = "self.labelId"
+                self.finalLabel = 1
+                self.idLabel = 1
+
+
+            self.diccionarioDeLabels = dict()
+
+            self.diccionarioDeLabels[str(self.inicialLabel) + str(self.finalLabel)] = int(self.idLabel)
+
+            for i in self.diccionarioDeLabels:
+                print(i)
+            """
             Label(self.root, text=id).grid(row=self.varFila, column=0)
             Label(self.root, text=nombre).grid(row=self.varFila, column=1)
             Label(self.root, text=nota).grid(row=self.varFila, column=2)
 
             self.añadirAlumnoBoton.grid(row=self.varFila + 1)
             self.eliminarAlumnoDeBaseBoton.grid(row=self.varFila + 1)
+
 
         except TclError:
             pass
@@ -197,18 +219,6 @@ class App():
         self.conexion = sqlite3.connect("Base.db")
         self.cursor = self.conexion.cursor()
 
-        # * Obtener Datos para saber si el ID ingresado existe
-
-        self.cursor.execute("SELECT ID FROM ALUMNOS")
-        self.verificarIdExisteParaBorrar = self.cursor.fetchall()
-
-        # * Recorrer la lista self.verificarIdExisteParaBorrar para ver si existe el id ingresado
-        # * Corregir
-
-#        if self.verificarIdExisteParaBorrar.__contains__(int(self.idAlumnoBorrarEntry.get())) == False:
-#            messagebox.showerror("ID", "El ID ingresado no existe")
-#            self.rooteliminarAlumnoDeBase.mainloop()
-
         self.idObtenidoABorrar = (int(self.idAlumnoBorrarEntry.get()), )
 
         self.cursor.execute("DELETE FROM ALUMNOS WHERE ID=?",
@@ -217,10 +227,16 @@ class App():
 
         self.rooteliminarAlumnoDeBase.destroy()
 
+        
+
         messagebox.showinfo(
             "Base de Datos", "El alumno se ha eliminado exitosamente")
 
-    def eliminarAlumnoDeApp(self):
+        self.idObtenidoABorrar = str(self.idObtenidoABorrar).replace("(", "")
+        self.idObtenidoABorrar = self.idObtenidoABorrar.replace(")", "")
+        self.idObtenidoABorrar = self.idObtenidoABorrar.replace(",", "")
+
+    def eliminarAlumnoDeApp(self, idABorrarDeApp):
         pass
 
     # * Funciones - Ayuda
@@ -301,7 +317,7 @@ class App():
         self.cargarNotaLista = self.cursor.fetchall()
 
         # Aqui creo un label a cada vuelta de bucle que se recorre de la lista capturada con el fetchall
-        
+
         self.varFila = 2
 
         for id in self.cargarIDLista:
@@ -315,7 +331,7 @@ class App():
         for nombre in self.cargarNombreLista:
             Label(self.root, text=nombre).grid(
                 row=self.varFila, column=1, padx=3, pady=3)
-            
+
             self.varFila += 1
 
         self.varFila = 2
