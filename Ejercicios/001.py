@@ -3,7 +3,13 @@ from tkinter import messagebox
 import sqlite3
 
 
-class App():
+class App:
+
+    # ? Variables
+    diccionarioDeLabelsId = dict()
+    diccionarioDeLabelsNombre = dict()
+    diccionarioDeLabelsNota = dict()
+
     def __init__(self):
         # ? Crear root
         self.root = Tk()
@@ -17,8 +23,8 @@ class App():
         # ? Variables
         self.varConectarseBool = False
 
-    # * Funciones - Menu
 
+    # * Funciones - Menu
     def funcionConectarseMenu(self):
         # ? Conexion a SQLite3
         try:
@@ -133,7 +139,6 @@ class App():
         self.notaAMostrar = "nota_" + str(self.infoAlumnoAñadir[1]) + "_Nota"
         # Este es el lugar inicial en donde se colocaran la informacion en la funcion
         self.varFila = 2
-        # mostrarAlumnoAñadido()
 
         self.mostrarAlumnoAñadido(
             self.ultimoID,
@@ -142,52 +147,89 @@ class App():
         )
 
     def mostrarAlumnoAñadido(self, id, nombre, nota):
-        try:
-            # Me conecto a la base (otra vez)
-            self.conexion = sqlite3.connect("Base.db")
-            self.cursor = self.conexion.cursor()
+        # try:
+        # Me conecto a la base (otra vez)
+        self.conexion = sqlite3.connect("Base.db")
+        self.cursor = self.conexion.cursor()
 
-            # Captura de datos
+        # Captura de datos
 
-            self.cursor.execute("SELECT ID FROM ALUMNOS")
-            self.cargarIdListaParaPosicionar = self.cursor.fetchall()
+        self.cursor.execute("SELECT ID FROM ALUMNOS")
+        self.cargarIdListaParaPosicionar = self.cursor.fetchall()
 
-            self.varFila = str(self.cargarIdListaParaPosicionar.pop())
-            self.varFila = self.varFila.replace("(", "")
-            self.varFila = self.varFila.replace(")", "")
-            self.varFila = self.varFila.replace(",", "")
+        self.varFila = str(self.cargarIdListaParaPosicionar.pop())
+        self.varFila = self.varFila.replace("(", "")
+        self.varFila = self.varFila.replace(")", "")
+        self.varFila = self.varFila.replace(",", "")
 
-            self.varFila = int(self.varFila) + 2
+        self.varFila = int(self.varFila) + 2
 
-            # * Creacion de variables para los labels
+        # * Nombres de variables de los labels
+        self.idLabel_Identificar = "id" + str(id) + "_label"
+        self.nombreLabel_Identificar = "nombreDelId" + str(id) + "_label"
+        self.notaLabel_Identificar = "notaDelId" + str(id) + "_label"
 
-                        
-            # * Variables para la funcion guardarAlumnosEnBase()
+        # * Asigno el valor a las variables de 'valor'
+        self.idLabel_Valor = int(id)
+        self.nombreLabel_Valor = str(nombre)
+        self.notaLabel_Valor = int(nota)
 
-            """
-            if darAcceso == 1:
-                self.inicialLabel = "self.labelId"
-                self.finalLabel = 1
-                self.idLabel = 1
+        # * Agrego informacion al diccionario con los nombres de las variables y su valor
+        # ? Necesito saber como traer las variables de __init__ hacia esta funcion
 
+        self.diccionarioDeLabelsId[self.idLabel_Identificar] = self.idLabel_Valor
+        self.diccionarioDeLabelsNombre[self.nombreLabel_Identificar] = self.nombreLabel_Valor
+        self.diccionarioDeLabelsNota[self.notaLabel_Identificar] = self.notaLabel_Valor
 
-            self.diccionarioDeLabels = dict()
+        # * Obtengo las claves de los 3 diccionarios:
+        self.listaDeClaves_DiccionarioId = list(
+            self.diccionarioDeLabelsId.keys())
 
-            self.diccionarioDeLabels[str(self.inicialLabel) + str(self.finalLabel)] = int(self.idLabel)
+        #print(self.listaDeClaves_DiccionarioId)
 
-            for i in self.diccionarioDeLabels:
-                print(i)
-            """
-            Label(self.root, text=id).grid(row=self.varFila, column=0)
-            Label(self.root, text=nombre).grid(row=self.varFila, column=1)
-            Label(self.root, text=nota).grid(row=self.varFila, column=2)
+        self.listaDeClaves_DiccionarioNombre = list(
+            self.diccionarioDeLabelsNombre.keys())
 
-            self.añadirAlumnoBoton.grid(row=self.varFila + 1)
-            self.eliminarAlumnoDeBaseBoton.grid(row=self.varFila + 1)
+        self.listaDeClaves_DiccionarioNota = list(
+            self.diccionarioDeLabelsNota.keys())
 
+        # * Obtengo los valores de los 3 diccionarios:
+        self.listaDeValores_DiccionarioId = list(
+            self.diccionarioDeLabelsId.values())
 
-        except TclError:
-            pass
+        self.listaDeValores_DiccionarioNombre = list(
+            self.diccionarioDeLabelsNombre.values())
+
+        self.listaDeValores_DiccionarioNota = list(
+            self.diccionarioDeLabelsNota.values())
+
+        #print(self.diccionarioDeLabelsId)
+        #print(self.diccionarioDeLabelsNombre)
+        #print(self.diccionarioDeLabelsNota)
+        #print()
+
+        # * Creo los labels
+        self.listaDeClaves_DiccionarioId = Label(
+            self.root, text=id).grid(row=self.varFila, column=0)
+
+        print(self.listaDeClaves_DiccionarioId)
+
+        self.listaDeClaves_DiccionarioNombre[0] = Label(
+            self.root, text=nombre).grid(row=self.varFila, column=1)
+
+        #print(self.listaDeClaves_DiccionarioNombre)
+
+        self.listaDeClaves_DiccionarioNota[0] = Label(
+            self.root, text=nota).grid(row=self.varFila, column=2)
+
+        #print(self.listaDeClaves_DiccionarioNota)
+
+        # * Acomodo los botones del root principal
+        self.añadirAlumnoBoton.grid(row=self.varFila + 1)
+        self.eliminarAlumnoDeBaseBoton.grid(row=self.varFila + 1)
+
+        # except TclError:
+        # pass
 
     # * Funciones de eliminar alumno
     def eliminarAlumnoRoot(self):
@@ -226,8 +268,6 @@ class App():
         self.conexion.commit()
 
         self.rooteliminarAlumnoDeBase.destroy()
-
-        
 
         messagebox.showinfo(
             "Base de Datos", "El alumno se ha eliminado exitosamente")
