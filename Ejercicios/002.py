@@ -1,13 +1,30 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import StringVar, messagebox
 import sqlite3
 import time
+
 
 class App:
     # ? Variables
     varFila = 2
 
     diccionarioAlmacenaLabels = dict()
+
+    listaDeClaves_id = list()
+    listaDeClaves_nombre = list()
+    listaDeClaves_nota = list()
+
+    listaDeValores_id = list()
+    listaDeValores_nombre = list()
+    listaDeValores_nota = list()
+
+    contadorParaCrearLabel = int()
+
+    nombre_LabelId = str()
+    nombre_LabelNombre = str()
+    nombre_LabelNota = str()
+
+    contadorParaNombre_LabelId = 0
 
     def __init__(self):
         # * Crear y modificar root principal
@@ -16,7 +33,7 @@ class App:
 
         # * Conectarse a la Base de Datos y crear tabla con un cursor
         self.conexionDeBase = sqlite3.connect("Base_002.db")
-        
+
         self.cursorDeBase = self.conexionDeBase.cursor()
         self.cursorDeBase.execute('''CREATE TABLE IF NOT EXISTS alumnos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,31 +54,65 @@ class App:
         tk.Label(self.root, text="Nota").grid(row=1, column=2, padx=7, pady=7)
 
         # * A partir de aqui empiezo a cargar los registros de la Base a la App
-        
+
         #self.cursorDeBase.execute("INSERT INTO alumnos VALUES (NULL, 'DIEGO', 20)")
         #self.cursorDeBase.execute("INSERT INTO alumnos VALUES (NULL, 'ALVARO', 15)")
 
         # Llamo a los "id" de la tabla "alumnos"
 
-        self.cursorDeBase.execute("SELECT * FROM alumnos")
-        self.obtenerDatosParaCargar = self.cursorDeBase.fetchall()
-
         self.cursorDeBase.execute("SELECT id FROM alumnos")
-        self.obtenerIdParaSeparar = self.cursorDeBase.fetchall()
+        self.obtenerIdParaCargar = self.cursorDeBase.fetchall()
 
-        for i in self.obtenerDatosParaCargar:
-            # * Con el siguiente "for" separo las listasy y poco mas
-            for i in self.obtenerIdParaSeparar:
-                self.labelIdentificador = "labelIdentificador_id" + str(self.obtenerIdParaSeparar.pop()).replace("(", "").replace(")", "").replace(",", "")
-                print(self.labelIdentificador)
+        self.cursorDeBase.execute("SELECT nombre FROM alumnos")
+        self.obtenerNombreParaCargar = self.cursorDeBase.fetchall()
 
-                self.labelValor = int(list(self.labelIdentificador).pop())
-                print(self.labelValor)
+        self.cursorDeBase.execute("SELECT nota FROM alumnos")
+        self.obtenerNotaParaCargar = self.cursorDeBase.fetchall()
 
-                self.diccionarioAlmacenaLabels[self.labelIdentificador] = self.labelValor
+        # Capturo los datos del id en la lista correspondiente
+        for i in self.obtenerIdParaCargar:
+            self.listaDeClaves_id.append(
+                int(str(i).replace(")", "").replace("(", "").replace(",", "")))
+        print(self.listaDeClaves_id)
 
-        print(self.diccionarioAlmacenaLabels)
-        #! almacenar el valor de self.labelIdentificar en un label. igual para el otro
+        # Capturo los datos de los nombres en la lista correspondiente
+        for i in self.obtenerNombreParaCargar:
+            self.listaDeClaves_nombre.append(str(i).replace(")", "").replace(
+                "(", "").replace("'", "").replace(",", ""))
+        print(self.listaDeClaves_nombre)
+
+        # Capturo los datos de la nota en la lista correspondiente
+        for i in self.obtenerNotaParaCargar:
+            self.listaDeClaves_nota.append(
+                int(str(i).replace(")", "").replace("(", "").replace(",", "")))
+        print(self.listaDeClaves_nota)
+
+
+        # * Creo los labels
+        # ! tengo que conseguir que labelId se almacene en una lista o lo que sea
+        # ! y en ves de ese entre otra variable
+
+        a = "labelId"
+        b = 1
+        diccionario = {}
+
+        diccionario[a + str(b)] = str(b)
+
+        print(diccionario)
+
+        for labelId in self.listaDeClaves_id:
+            
+            labelId = tk.Label(
+                self.root, text=self.listaDeClaves_id[self.contadorParaCrearLabel])
+            labelId.grid(row=self.varFila, column=0)
+
+            self.varFila += 1
+            self.contadorParaCrearLabel += 1
+
+        labelId.destroy()
+        
+        self.varFila = 2
+        self.contadorParaCrearLabel = 0
 
         # * Botones Principales
         self.generarGUI_BotonAñadirAlumno = tk.Button(
@@ -109,7 +160,6 @@ class App:
         self.menuPrincipal.add_cascade(menu=self.menuArchivo, label="Alumnos")
         self.menuPrincipal.add_cascade(menu=self.menuAlumnos, label="Archivo")
         self.menuPrincipal.add_cascade(menu=self.menuAyuda, label="Ayuda")
-
 
 
 app_001 = App()
