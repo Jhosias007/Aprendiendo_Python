@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import StringVar, messagebox
 import sqlite3
+from tkinter.tix import COLUMN
 
 
 class App:
@@ -14,20 +15,23 @@ class App:
     listaDeClaves_nombre = list()
     listaDeClaves_nota = list()
 
-    listaDeValores_id = list()
-    listaDeValores_nombre = list()
-    listaDeValores_nota = list()
-
     nombre_LabelId = "labelId"
     nombre_LabelNombre = "labelNombre"
     nombre_LabelNota = "labelNota"
 
-    contadorParaNombre_LabelId = 1
     posicionDeLabel = 0
+    contadorParaNombre_LabelId = 1
 
-    # * Lo siguiente es para agregar un nuevo alumno
+    # * Lo siguiente es para mostrar al nuevo alumno en app
+    diccionarioMostrarNewAlumno_ID = dict()
+    diccionarioMostrarNewAlumno_Nombre = dict()
+    diccionarioMostrarNewAlumno_Nota = dict()
 
-    listaNuevoAlumno = list()
+    contadorParaPosicionarNewAlumno = 0
+
+    nombreNewAl_LabelId = "labelId"
+    nombreNewAl_LabelNombre = "labelNombre"
+    nombreNewAl_LabelNota = "labelNota"
 
     def __init__(self):
         # * Crear y modificar root principal
@@ -50,7 +54,7 @@ class App:
         self.root.mainloop()
 
     # * Funciones de botones principales
-
+    # * Funciones de boton añadir alumno
     def generarRootAñadirAlumno(self):
         self.rootAñadirAlumno = tk.Tk()
 
@@ -83,7 +87,11 @@ class App:
         self.rootAñadirAlumno.mainloop()
 
     def guardarAlumnoFuncion(self):
+
+        self.listaNuevoAlumno = list()
+
         # * Conexion a base y creacion de cursor y tabla
+
         self.conexionDeBase = sqlite3.connect("Base_002.db")
 
         self.cursorDeBase = self.conexionDeBase.cursor()
@@ -112,15 +120,113 @@ class App:
 
         self.rootAñadirAlumno.destroy()
         self.conexionDeBase.commit()
-        self.listaNuevoAlumno.clear()
 
         messagebox.showinfo(
-            "Nuevo Alumno", "Se ha registrado al alumno con el ID: " + self.ultimoIdParaMostrar )
+            "Nuevo Alumno", "Se ha registrado al alumno con el ID: " + self.ultimoIdParaMostrar)
 
-        self.mostrarAlumnoAñadidoEnApp()
+        # * Obtengo valores para pasar por parametros a la funcion que mustra al new alumno en app
 
-    def mostrarAlumnoAñadidoEnApp(self):
-        pass #! tengo crear labels declarados que se generen segun los añadidos
+        # * Obtengo Id
+        self.cursorDeBase.execute("SELECT id FROM alumnos")
+        self.idAMostrar = int(str(self.cursorDeBase.fetchall().pop()).replace(
+            "(", "").replace(")", "").replace(",", ""))
+
+        # * Obtengo el Nombre
+        self.cursorDeBase.execute("SELECT nombre FROM alumnos")
+        self.nombreAMostrar = str(self.cursorDeBase.fetchall().pop()).replace(
+            "(", "").replace(")", "").replace(",", "").replace("'", "")
+
+        # * Obtengo la Nota
+        self.cursorDeBase.execute("SELECT nota FROM alumnos")
+        self.notaAMostrar = int(str(self.cursorDeBase.fetchall().pop()).replace(
+            "(", "").replace(")", "").replace(",", ""))
+
+        self.mostrarAlumnoAñadidoEnApp(
+            self.idAMostrar, self.nombreAMostrar, self.notaAMostrar)
+
+    def mostrarAlumnoAñadidoEnApp(self, id, nombre, nota):
+
+        # * Obtengo el valor de varFila
+
+        self.cursorDeBase.execute("SELECT id FROM alumnos")
+        self.varFila = int(len(self.cursorDeBase.fetchall())) + 2
+
+        # * Agrego El ID
+        self.diccionarioMostrarNewAlumno_ID[self.nombreNewAl_LabelId +
+                                            str(id)] = tk.Label(self.root, text=id)
+
+        self.diccionarioMostrarNewAlumno_ID[self.nombreNewAl_LabelId +
+                                            str(id)].grid(row=self.varFila, column=0)
+
+        # * Agrego Los Nombres
+        self.diccionarioMostrarNewAlumno_Nombre[self.nombreNewAl_LabelNombre + str(
+            id)] = tk.Label(self.root, text=nombre)
+        self.diccionarioMostrarNewAlumno_Nombre[self.nombreNewAl_LabelNombre + str(
+            id)].grid(row=self.varFila, column=1)
+
+        # * Agrego Las Notas
+        self.diccionarioMostrarNewAlumno_Nota[self.nombreNewAl_LabelNota + str(
+            id)] = tk.Label(self.root, text=nota)
+        self.diccionarioMostrarNewAlumno_Nota[self.nombreNewAl_LabelNota + str(
+            id)].grid(row=self.varFila, column=2)
+
+        self.varFila += 1
+
+        # * Posicion de botones
+        self.generarGUI_BotonAñadirAlumno.grid(row=self.varFila, column=0)
+        self.generarGUI_BotonEliminarAlumno.grid(row=self.varFila, column=2)
+
+    # * Funciones de boton eliminar alumno
+    def generarRootEliminarAlumno(self):
+        self.rootEliminarAlumno = tk.Tk()
+        self.rootEliminarAlumno.title("Eliminar Alumno")
+
+        # * Labels principales
+        tk.Label(self.rootEliminarAlumno, text="Eliminar Alumno").grid(row=0, column=0, columnspan=2, padx=7, pady=7)
+        tk.Label(self.rootEliminarAlumno, text="ID del Alumno").grid(row=1, column=0, padx=7, pady=7)
+
+        # * Entrys principales
+        self.entryID_EliminarAlumnoRoot_SV = StringVar()
+        self.entryID_EliminarAlumnoRoot = tk.Entry(self.rootEliminarAlumno, textvariable=self.entryID_EliminarAlumnoRoot_SV)
+        self.entryID_EliminarAlumnoRoot.grid(row=1, column=1, padx=7, pady=7)
+
+        # * Botones principales
+        self.buttonEnviar_EliminarAlumnoRoot = tk.Button(self.rootEliminarAlumno, text="Enviar", command=lambda: self.eliminarAlumnoFuncion())
+        self.buttonEnviar_EliminarAlumnoRoot.grid(row=2, column=0, columnspan=2, padx=7, pady=7)
+
+        self.rootEliminarAlumno.mainloop()
+
+    def eliminarAlumnoFuncion(self):
+
+        self.conexionDeBase = sqlite3.connect("Base_002.db")
+
+        self.cursorDeBase = self.conexionDeBase.cursor()
+        self.cursorDeBase.execute('''CREATE TABLE IF NOT EXISTS alumnos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre VARCHAR (20),
+            nota INTEGER
+        )''')
+
+        self.cursorDeBase.execute("SELECT id FROM alumnos")
+        self.consultarIdsParaBorrarAl = str(self.cursorDeBase.fetchall()).replace("(", "").replace(",)", "")
+
+        self.idDeAlumnoAEliminar = self.entryID_EliminarAlumnoRoot.get()
+
+        if self.idDeAlumnoAEliminar in self.consultarIdsParaBorrarAl:
+            self.cursorDeBase.execute("DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
+            self.rootEliminarAlumno.destroy()
+            messagebox.showinfo("Alumno Eliminado", "Se ha eliminado el alumno correctamente")
+        else:
+            messagebox.showerror("ID Alumno", "El ID ingresado no existe")
+
+        self.conexionDeBase.commit()
+
+        self.quitarAlumnoDeApp(self.idDeAlumnoAEliminar)
+
+    def quitarAlumnoDeApp(self, id):
+        print(self.diccionarioAlmacenaLabels)
+        print()
+        print()
 
     def generarGUI(self):
         # * Labels Principales
@@ -131,11 +237,7 @@ class App:
 
         # * A partir de aqui empiezo a cargar los registros de la Base a la App
 
-        #self.cursorDeBase.execute("INSERT INTO alumnos VALUES (NULL, 'DIEGO', 20)")
-        #self.cursorDeBase.execute("INSERT INTO alumnos VALUES (NULL, 'ALVARO', 15)")
-
-        # Llamo a los "id" de la tabla "alumnos"
-
+        # * Obtengo toda la informacion de la base separados
         self.cursorDeBase.execute("SELECT id FROM alumnos")
         self.obtenerIdParaCargar = self.cursorDeBase.fetchall()
 
@@ -145,26 +247,22 @@ class App:
         self.cursorDeBase.execute("SELECT nota FROM alumnos")
         self.obtenerNotaParaCargar = self.cursorDeBase.fetchall()
 
-        # Capturo los datos del id en la lista correspondiente
+        # * Capturo los datos del id en la lista correspondiente
         for i in self.obtenerIdParaCargar:
             self.listaDeClaves_id.append(
                 int(str(i).replace(")", "").replace("(", "").replace(",", "")))
-        # print(self.listaDeClaves_id)
 
-        # Capturo los datos de los nombres en la lista correspondiente
+        # * Capturo los datos de los nombres en la lista correspondiente
         for i in self.obtenerNombreParaCargar:
             self.listaDeClaves_nombre.append(str(i).replace(")", "").replace(
                 "(", "").replace("'", "").replace(",", ""))
-        # print(self.listaDeClaves_nombre)
 
-        # Capturo los datos de la nota en la lista correspondiente
+        # * Capturo los datos de la nota en la lista correspondiente
         for i in self.obtenerNotaParaCargar:
             self.listaDeClaves_nota.append(
                 int(str(i).replace(")", "").replace("(", "").replace(",", "")))
-        # print(self.listaDeClaves_nota)
 
         # * Creo los labels de ID
-
         for i in self.listaDeClaves_id:
             self.diccionarioAlmacenaLabels[self.nombre_LabelId + str(self.contadorParaNombre_LabelId)] = tk.Label(
                 self.root, text=self.listaDeClaves_id[self.posicionDeLabel])
@@ -205,10 +303,6 @@ class App:
             self.contadorParaNombre_LabelId += 1
             self.posicionDeLabel += 1
 
-
-#        for i in self.diccionarioAlmacenaLabels:
-#            print(i)
-
         # * Botones Principales
         self.generarGUI_BotonAñadirAlumno = tk.Button(
             self.root, text="Añadir Alumno", command=lambda: self.generarRootAñadirAlumno())
@@ -216,12 +310,14 @@ class App:
             row=self.varFila, column=0, padx=7, pady=7)
 
         self.generarGUI_BotonEliminarAlumno = tk.Button(
-            self.root, text="Eliminar Alumno")
+            self.root, text="Eliminar Alumno", command=lambda: self.generarRootEliminarAlumno())
         self.generarGUI_BotonEliminarAlumno.grid(
             row=self.varFila, column=2, padx=7, pady=7)
 
         self.conexionDeBase.commit()
         self.conexionDeBase.close()
+
+        self.contadorParaNombre_LabelId = 1
 
     def generarMenuGUI(self):
         # * Creo el menu principal
@@ -255,7 +351,6 @@ class App:
         self.menuPrincipal.add_cascade(menu=self.menuArchivo, label="Alumnos")
         self.menuPrincipal.add_cascade(menu=self.menuAlumnos, label="Archivo")
         self.menuPrincipal.add_cascade(menu=self.menuAyuda, label="Ayuda")
-
 
 app_001 = App()
 
