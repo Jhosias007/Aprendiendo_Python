@@ -9,7 +9,6 @@ class App:
     varFila = 2
 
     # * Lo siguiente es para cargar los datos de la base a la app cuando se inicia
-    diccionarioAlmacenaLabels = dict()
 
     listaDeClaves_id = list()
     listaDeClaves_nombre = list()
@@ -23,9 +22,9 @@ class App:
     contadorParaNombre_LabelId = 1
 
     # * Lo siguiente es para mostrar al nuevo alumno en app
-    diccionarioMostrarNewAlumno_ID = dict()
-    diccionarioMostrarNewAlumno_Nombre = dict()
-    diccionarioMostrarNewAlumno_Nota = dict()
+    diccionario_ID = dict()
+    diccionario_Nombre = dict()
+    diccionario_Nota = dict()
 
     contadorParaPosicionarNewAlumno = 0
 
@@ -152,22 +151,22 @@ class App:
         self.varFila = int(len(self.cursorDeBase.fetchall())) + 2
 
         # * Agrego El ID
-        self.diccionarioMostrarNewAlumno_ID[self.nombreNewAl_LabelId +
+        self.diccionario_ID[self.nombreNewAl_LabelId +
                                             str(id)] = tk.Label(self.root, text=id)
 
-        self.diccionarioMostrarNewAlumno_ID[self.nombreNewAl_LabelId +
+        self.diccionario_ID[self.nombreNewAl_LabelId +
                                             str(id)].grid(row=self.varFila, column=0)
 
         # * Agrego Los Nombres
-        self.diccionarioMostrarNewAlumno_Nombre[self.nombreNewAl_LabelNombre + str(
+        self.diccionario_Nombre[self.nombreNewAl_LabelNombre + str(
             id)] = tk.Label(self.root, text=nombre)
-        self.diccionarioMostrarNewAlumno_Nombre[self.nombreNewAl_LabelNombre + str(
+        self.diccionario_Nombre[self.nombreNewAl_LabelNombre + str(
             id)].grid(row=self.varFila, column=1)
 
         # * Agrego Las Notas
-        self.diccionarioMostrarNewAlumno_Nota[self.nombreNewAl_LabelNota + str(
+        self.diccionario_Nota[self.nombreNewAl_LabelNota + str(
             id)] = tk.Label(self.root, text=nota)
-        self.diccionarioMostrarNewAlumno_Nota[self.nombreNewAl_LabelNota + str(
+        self.diccionario_Nota[self.nombreNewAl_LabelNota + str(
             id)].grid(row=self.varFila, column=2)
 
         self.varFila += 1
@@ -224,9 +223,14 @@ class App:
         self.quitarAlumnoDeApp(self.idDeAlumnoAEliminar)
 
     def quitarAlumnoDeApp(self, id):
-        print(self.diccionarioAlmacenaLabels)
-        print()
-        print()
+        #print(self.diccionario_ID)
+        #print()
+        #print(self.diccionario_Nombre)
+        #print()
+        #print(self.diccionario_Nota)
+        #print()
+
+        pass
 
     def generarGUI(self):
         # * Labels Principales
@@ -264,9 +268,9 @@ class App:
 
         # * Creo los labels de ID
         for i in self.listaDeClaves_id:
-            self.diccionarioAlmacenaLabels[self.nombre_LabelId + str(self.contadorParaNombre_LabelId)] = tk.Label(
+            self.diccionario_ID[self.nombre_LabelId + str(self.contadorParaNombre_LabelId)] = tk.Label(
                 self.root, text=self.listaDeClaves_id[self.posicionDeLabel])
-            self.diccionarioAlmacenaLabels[self.nombre_LabelId + str(
+            self.diccionario_ID[self.nombre_LabelId + str(
                 self.contadorParaNombre_LabelId)].grid(row=self.varFila, column=0)
 
             self.varFila += 1
@@ -279,9 +283,9 @@ class App:
 
         # * Creo los labels de Nombre
         for i in self.listaDeClaves_nombre:
-            self.diccionarioAlmacenaLabels[self.nombre_LabelNombre + str(self.contadorParaNombre_LabelId)] = tk.Label(
+            self.diccionario_Nombre[self.nombre_LabelNombre + str(self.contadorParaNombre_LabelId)] = tk.Label(
                 self.root, text=self.listaDeClaves_nombre[self.posicionDeLabel])
-            self.diccionarioAlmacenaLabels[self.nombre_LabelNombre + str(
+            self.diccionario_Nombre[self.nombre_LabelNombre + str(
                 self.contadorParaNombre_LabelId)].grid(row=self.varFila, column=1)
 
             self.varFila += 1
@@ -294,9 +298,9 @@ class App:
 
         # * Creo los labels de Nota
         for i in self.listaDeClaves_nota:
-            self.diccionarioAlmacenaLabels[self.nombre_LabelNota + str(self.contadorParaNombre_LabelId)] = tk.Label(
+            self.diccionario_Nota[self.nombre_LabelNota + str(self.contadorParaNombre_LabelId)] = tk.Label(
                 self.root, text=self.listaDeClaves_nota[self.posicionDeLabel])
-            self.diccionarioAlmacenaLabels[self.nombre_LabelNota + str(
+            self.diccionario_Nota[self.nombre_LabelNota + str(
                 self.contadorParaNombre_LabelId)].grid(row=self.varFila, column=2)
 
             self.varFila += 1
