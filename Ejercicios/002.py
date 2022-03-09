@@ -9,7 +9,6 @@ class App:
     varFila = 2
 
     # * Lo siguiente es para cargar los datos de la base a la app cuando se inicia
-
     listaDeClaves_id = list()
     listaDeClaves_nombre = list()
     listaDeClaves_nota = list()
@@ -25,12 +24,6 @@ class App:
     diccionario_ID = dict()
     diccionario_Nombre = dict()
     diccionario_Nota = dict()
-
-    contadorParaPosicionarNewAlumno = 0
-
-    nombreNewAl_LabelId = "labelId"
-    nombreNewAl_LabelNombre = "labelNombre"
-    nombreNewAl_LabelNota = "labelNota"
 
     def __init__(self):
         # * Crear y modificar root principal
@@ -52,10 +45,10 @@ class App:
         self.generarGUI()
         self.root.mainloop()
 
-    # * Funciones de botones principales
     # * Funciones de boton añadir alumno
     def generarRootAñadirAlumno(self):
         self.rootAñadirAlumno = tk.Tk()
+        self.rootAñadirAlumno.title("Añadir Alumno")
 
         # * Labels del rootAñadirAlumno (no necesitan declararse)
         tk.Label(self.rootAñadirAlumno, text="Añadir Alumno").grid(
@@ -151,22 +144,22 @@ class App:
         self.varFila = int(len(self.cursorDeBase.fetchall())) + 2
 
         # * Agrego El ID
-        self.diccionario_ID[self.nombreNewAl_LabelId +
-                                            str(id)] = tk.Label(self.root, text=id)
+        self.diccionario_ID[self.nombre_LabelId +
+                            str(id)] = tk.Label(self.root, text=id)
 
-        self.diccionario_ID[self.nombreNewAl_LabelId +
-                                            str(id)].grid(row=self.varFila, column=0)
+        self.diccionario_ID[self.nombre_LabelId +
+                            str(id)].grid(row=self.varFila, column=0)
 
         # * Agrego Los Nombres
-        self.diccionario_Nombre[self.nombreNewAl_LabelNombre + str(
+        self.diccionario_Nombre[self.nombre_LabelNombre + str(
             id)] = tk.Label(self.root, text=nombre)
-        self.diccionario_Nombre[self.nombreNewAl_LabelNombre + str(
+        self.diccionario_Nombre[self.nombre_LabelNombre + str(
             id)].grid(row=self.varFila, column=1)
 
         # * Agrego Las Notas
-        self.diccionario_Nota[self.nombreNewAl_LabelNota + str(
+        self.diccionario_Nota[self.nombre_LabelNota + str(
             id)] = tk.Label(self.root, text=nota)
-        self.diccionario_Nota[self.nombreNewAl_LabelNota + str(
+        self.diccionario_Nota[self.nombre_LabelNota + str(
             id)].grid(row=self.varFila, column=2)
 
         self.varFila += 1
@@ -181,17 +174,22 @@ class App:
         self.rootEliminarAlumno.title("Eliminar Alumno")
 
         # * Labels principales
-        tk.Label(self.rootEliminarAlumno, text="Eliminar Alumno").grid(row=0, column=0, columnspan=2, padx=7, pady=7)
-        tk.Label(self.rootEliminarAlumno, text="ID del Alumno").grid(row=1, column=0, padx=7, pady=7)
+        tk.Label(self.rootEliminarAlumno, text="Eliminar Alumno").grid(
+            row=0, column=0, columnspan=2, padx=7, pady=7)
+        tk.Label(self.rootEliminarAlumno, text="ID del Alumno").grid(
+            row=1, column=0, padx=7, pady=7)
 
         # * Entrys principales
         self.entryID_EliminarAlumnoRoot_SV = StringVar()
-        self.entryID_EliminarAlumnoRoot = tk.Entry(self.rootEliminarAlumno, textvariable=self.entryID_EliminarAlumnoRoot_SV)
+        self.entryID_EliminarAlumnoRoot = tk.Entry(
+            self.rootEliminarAlumno, textvariable=self.entryID_EliminarAlumnoRoot_SV)
         self.entryID_EliminarAlumnoRoot.grid(row=1, column=1, padx=7, pady=7)
 
         # * Botones principales
-        self.buttonEnviar_EliminarAlumnoRoot = tk.Button(self.rootEliminarAlumno, text="Enviar", command=lambda: self.eliminarAlumnoFuncion())
-        self.buttonEnviar_EliminarAlumnoRoot.grid(row=2, column=0, columnspan=2, padx=7, pady=7)
+        self.buttonEnviar_EliminarAlumnoRoot = tk.Button(
+            self.rootEliminarAlumno, text="Enviar", command=lambda: self.eliminarAlumnoFuncion())
+        self.buttonEnviar_EliminarAlumnoRoot.grid(
+            row=2, column=0, columnspan=2, padx=7, pady=7)
 
         self.rootEliminarAlumno.mainloop()
 
@@ -207,14 +205,17 @@ class App:
         )''')
 
         self.cursorDeBase.execute("SELECT id FROM alumnos")
-        self.consultarIdsParaBorrarAl = str(self.cursorDeBase.fetchall()).replace("(", "").replace(",)", "")
+        self.consultarIdsParaBorrarAl = str(
+            self.cursorDeBase.fetchall()).replace("(", "").replace(",)", "")
 
         self.idDeAlumnoAEliminar = self.entryID_EliminarAlumnoRoot.get()
 
         if self.idDeAlumnoAEliminar in self.consultarIdsParaBorrarAl:
-            self.cursorDeBase.execute("DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
+            self.cursorDeBase.execute(
+                "DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
             self.rootEliminarAlumno.destroy()
-            messagebox.showinfo("Alumno Eliminado", "Se ha eliminado el alumno correctamente")
+            messagebox.showinfo("Alumno Eliminado",
+                                "Se ha eliminado el alumno correctamente")
         else:
             messagebox.showerror("ID Alumno", "El ID ingresado no existe")
 
@@ -223,15 +224,62 @@ class App:
         self.quitarAlumnoDeApp(self.idDeAlumnoAEliminar)
 
     def quitarAlumnoDeApp(self, id):
-        #print(self.diccionario_ID)
-        #print()
-        #print(self.diccionario_Nombre)
-        #print()
-        #print(self.diccionario_Nota)
-        #print()
 
+        # * Elimino el alumno ingresado del diccionario de id
+        if self.nombre_LabelId + str(id) in self.diccionario_ID.keys():
+            self.diccionario_ID[self.nombre_LabelId + str(id)].destroy()
+            del self.diccionario_ID[self.nombre_LabelId + str(id)]
+        else:
+            pass
+
+        # * Elimino el alumno ingresado del diccionario de nombre
+        if self.nombre_LabelNombre + str(id) in self.diccionario_Nombre.keys():
+            self.diccionario_Nombre[self.nombre_LabelNombre +
+                                    str(id)].destroy()
+            del self.diccionario_Nombre[self.nombre_LabelNombre + str(id)]
+        else:
+            pass
+
+        # * Elimino el alumno ingresado del diccionario de nota
+        if self.nombre_LabelNota + str(id) in self.diccionario_Nota.keys():
+            self.diccionario_Nota[self.nombre_LabelNota + str(id)].destroy()
+            del self.diccionario_Nota[self.nombre_LabelNota + str(id)]
+        else:
+            pass
+
+    # * ---------------------------------- Funciones de Menu --------------------------------------------
+
+    # * Funciones de menu Alumnos
+
+    def funcionNuevaVentana_MenuAlumnos(self):
+        pass # ! crear nueva ventana al llamar la funcion
+
+    def funcionSalir_MenuAlumnos(self):
+        self.varSalir = messagebox.askokcancel("Salir", "¿Deseas salir de la aplicacion?")
+
+        if self.varSalir == True:
+            self.root.destroy()
+
+    # * Funciones de menu Archivo
+
+    def funcionEditarAlumno_MenuArchivo(self):
         pass
 
+    def funcionVerAprobados_MenuArchivo(self):
+        pass
+
+    def funcionVerDesaprobados_MenuArchivo(self):
+        pass
+
+    # * Funciones de menu Ayuda
+
+    def funcionLicencia_MenuAyuda(self):
+        messagebox.showinfo("Licencia", "La licencia es mia")
+
+    def funcionAcercaDe_MenuAyuda(self):
+        messagebox.showinfo("Acerca De", "App creada desde el 02 de marzo de 2022 al \n xx de blablabla")
+
+    # * Funciones para generar GUI completo
     def generarGUI(self):
         # * Labels Principales
         tk.Label(self.root, text="ALUMNOS").grid(row=0, column=1)
@@ -335,27 +383,29 @@ class App:
 
         # * Creo las opciones de los sub menus
         # Opciones del sub menu "menuArchivo"
-        self.menuArchivo.add_command(label="Nueva Ventana")
+        self.menuArchivo.add_command(label="Nueva Ventana", command=lambda: self.funcionNuevaVentana_MenuAlumnos())
         self.menuArchivo.add_separator()
-        self.menuArchivo.add_command(label="Salir")
+        self.menuArchivo.add_command(label="Salir", command=lambda: self.funcionSalir_MenuAlumnos())
 
         # Opciones del sub menu "menuAlumnos"
-        self.menuAlumnos.add_command(label="Añadir Alumno")
-        self.menuAlumnos.add_command(label="Eliminar Alumno")
+        self.menuAlumnos.add_command(label="Añadir Alumno", command=lambda: self.generarRootAñadirAlumno())
+        self.menuAlumnos.add_command(label="Eliminar Alumno", command=lambda: self.generarRootEliminarAlumno())
         self.menuAlumnos.add_command(label="Editar Alumno")
         self.menuAlumnos.add_separator()
-        self.menuAlumnos.add_command(label="Ver Aprobados")
-        self.menuAlumnos.add_command(label="Ver Desaprobados")
+        self.menuAlumnos.add_command(label="Ver Aprobados", command=lambda: self.funcionVerAprobados_MenuArchivo())
+        self.menuAlumnos.add_command(label="Ver Desaprobados", command=lambda: self.funcionVerDesaprobados_MenuArchivo())
 
         # Opciones del sub menu "menuAyuda"
-        self.menuAyuda.add_command(label="Licencia")
-        self.menuAyuda.add_command(label="Acerca De")
+        self.menuAyuda.add_command(label="Licencia", command=lambda: self.funcionLicencia_MenuAyuda())
+        self.menuAyuda.add_command(label="Acerca De", command=lambda: self.funcionAcercaDe_MenuAyuda())
 
         # * Hago visible el menu principal y los sub menus
         self.menuPrincipal.add_cascade(menu=self.menuArchivo, label="Alumnos")
         self.menuPrincipal.add_cascade(menu=self.menuAlumnos, label="Archivo")
         self.menuPrincipal.add_cascade(menu=self.menuAyuda, label="Ayuda")
 
+
 app_001 = App()
 
 # ! Dia 2 de Marzo del 2022. Comienza Epicamente*
+# ! Logre que los labels se eliminen en tiempo real :))))))) (Hoy es 08 de marzo del 2022)
