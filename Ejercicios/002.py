@@ -212,7 +212,7 @@ class App:
 
         self.rootEliminarAlumno.mainloop()
 
-    def eliminarAlumnoFuncion(self):
+    def eliminarAlumnoFuncion(self): # ! Corregir, cuando elimino un alumno con id de 2 digitos hay error
 
         self.conexionDeBase = sqlite3.connect("Base_002.db")
 
@@ -229,20 +229,18 @@ class App:
 
         self.idDeAlumnoAEliminar = self.entryID_EliminarAlumnoRoot.get()
 
-        
+        if self.idDeAlumnoAEliminar in self.consultarIdsParaBorrarAl:
+            self.cursorDeBase.execute(
+                "DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
+            self.rootEliminarAlumno.destroy()
+            messagebox.showinfo("Alumno Eliminado",
+                                "Se ha eliminado el alumno correctamente")
+        else:
+            messagebox.showerror("ID Alumno", "El ID ingresado no existe")
 
-#        if self.idDeAlumnoAEliminar in self.consultarIdsParaBorrarAl:
-#            self.cursorDeBase.execute(
-#                "DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
-#            self.rootEliminarAlumno.destroy()
-#            messagebox.showinfo("Alumno Eliminado",
-#                                "Se ha eliminado el alumno correctamente")
-#        else:
-#            messagebox.showerror("ID Alumno", "El ID ingresado no existe")
-#
-#        self.conexionDeBase.commit()
-#
-#        self.quitarAlumnoDeApp(self.idDeAlumnoAEliminar)
+        self.conexionDeBase.commit()
+
+        self.quitarAlumnoDeApp(self.idDeAlumnoAEliminar)
 
     def quitarAlumnoDeApp(self, id):
 
