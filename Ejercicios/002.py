@@ -106,7 +106,7 @@ class App:
                 messagebox.showerror(
                     "Nota", "Solo debes ingresar caracteres numericos en la nota")
                 self.rootAñadirAlumno.mainloop()
-            
+
             elif int(self.entryNota_AñadirAlumnoRoot.get()) < 0 or int(self.entryNota_AñadirAlumnoRoot.get()) > 20:
                 messagebox.showerror("Nota", "El rango de nota es del 0 - 20")
                 self.rootAñadirAlumno.mainloop()
@@ -212,10 +212,11 @@ class App:
 
         self.rootEliminarAlumno.mainloop()
 
-    def eliminarAlumnoFuncion(self): # ! Corregir, cuando elimino un alumno con id de 2 digitos hay error
-
+    # ! Corregir, cuando elimino un alumno con id de 2 digitos hay error
+    def eliminarAlumnoFuncion(self):
+        
+        # * Me conecto a la base de datos
         self.conexionDeBase = sqlite3.connect("Base_002.db")
-
         self.cursorDeBase = self.conexionDeBase.cursor()
         self.cursorDeBase.execute('''CREATE TABLE IF NOT EXISTS alumnos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -223,18 +224,23 @@ class App:
             nota INTEGER
         )''')
 
+        # * Obtengo los IDs para ver si el ID ingresado pa' borrar existe o no
         self.cursorDeBase.execute("SELECT id FROM alumnos")
         self.consultarIdsParaBorrarAl = str(
             self.cursorDeBase.fetchall()).replace("(", "").replace(",)", "")
 
+        # * Declaro la variable del ID ingresado
         self.idDeAlumnoAEliminar = self.entryID_EliminarAlumnoRoot.get()
 
+        # * Consulto si el id ingresado esta en la base, si es asi, elimino el id de la base
         if self.idDeAlumnoAEliminar in self.consultarIdsParaBorrarAl:
             self.cursorDeBase.execute(
                 "DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
             self.rootEliminarAlumno.destroy()
             messagebox.showinfo("Alumno Eliminado",
                                 "Se ha eliminado el alumno correctamente")
+
+        # * Si el ID ingresado no esta en la base, se muestra un mensaje de error
         else:
             messagebox.showerror("ID Alumno", "El ID ingresado no existe")
 
@@ -396,14 +402,17 @@ class App:
             str(self.notaAEditar), int(self.idDeAlumnoAEditar)]
 
         # * Realizo los cambios de nombre y nota en la base
-        self.cursorDeBase.execute("UPDATE alumnos SET nombre=? WHERE id=?", self.listaDeDatosNombre_ActualizarAlumno)
-        self.cursorDeBase.execute("UPDATE alumnos SET nota=? WHERE id=?", self.listaDeDatosNota_ActualizarAlumno)
+        self.cursorDeBase.execute(
+            "UPDATE alumnos SET nombre=? WHERE id=?", self.listaDeDatosNombre_ActualizarAlumno)
+        self.cursorDeBase.execute(
+            "UPDATE alumnos SET nota=? WHERE id=?", self.listaDeDatosNota_ActualizarAlumno)
 
         self.conexionDeBase.commit()
 
         self.rootEditarAlumno_2.destroy()
 
-        messagebox.showinfo("Alumno", "La informacion del alumno ha sido actualizada correctamente")
+        messagebox.showinfo(
+            "Alumno", "La informacion del alumno ha sido actualizada correctamente")
 
     def funcionVerAprobados_MenuArchivo(self):
         pass
