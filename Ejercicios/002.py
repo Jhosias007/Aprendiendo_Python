@@ -1,7 +1,6 @@
 import tkinter as tk
-from tkinter import StringVar, messagebox
+from tkinter import StringVar, TclError, messagebox
 import sqlite3
-from tkinter.tix import COLUMN
 
 
 class App:
@@ -79,62 +78,82 @@ class App:
         self.rootAñadirAlumno.mainloop()
 
     def guardarAlumnoFuncion(self):
+        try:
+            self.listaNuevoAlumno = list()
 
-        self.listaNuevoAlumno = list()
+            # * Conexion a base y creacion de cursor y tabla
 
-        # * Conexion a base y creacion de cursor y tabla
+            self.conexionDeBase = sqlite3.connect("Base_002.db")
 
-        self.conexionDeBase = sqlite3.connect("Base_002.db")
+            self.cursorDeBase = self.conexionDeBase.cursor()
+            self.cursorDeBase.execute('''CREATE TABLE IF NOT EXISTS alumnos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre VARCHAR (20),
+                nota INTEGER
+            )''')
 
-        self.cursorDeBase = self.conexionDeBase.cursor()
-        self.cursorDeBase.execute('''CREATE TABLE IF NOT EXISTS alumnos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre VARCHAR (20),
-            nota INTEGER
-        )''')
+            # * Agrego el nombre y la nota a la lista
 
-        self.listaNuevoAlumno.append(
-            str(self.entryNombre_AñadirAlumnoRoot.get()))
-        self.listaNuevoAlumno.append(
-            int(self.entryNota_AñadirAlumnoRoot.get()))
+            if self.entryNombre_AñadirAlumnoRoot.get().isalpha() == False:
+                messagebox.showerror(
+                    "Nombre", "El nombre ingresado solo debe contener caracteres alfabeticos")
+                self.rootAñadirAlumno.mainloop()
+            else:
+                self.listaNuevoAlumno.append(
+                    str(self.entryNombre_AñadirAlumnoRoot.get()))
 
-        self.cursorDeBase.execute(
-            "INSERT INTO alumnos VALUES (NULL, ?, ?)", self.listaNuevoAlumno)
+            if self.entryNota_AñadirAlumnoRoot.get().isdigit() == False:
+                messagebox.showerror(
+                    "Nota", "Solo debes ingresar caracteres numericos en la nota")
+                self.rootAñadirAlumno.mainloop()
+            
+            elif int(self.entryNota_AñadirAlumnoRoot.get()) < 0 or int(self.entryNota_AñadirAlumnoRoot.get()) > 20:
+                messagebox.showerror("Nota", "El rango de nota es del 0 - 20")
+                self.rootAñadirAlumno.mainloop()
+            else:
+                self.listaNuevoAlumno.append(
+                    int(self.entryNota_AñadirAlumnoRoot.get()))
 
-        # * Obtengo los ID's para dar la informacion
+            self.cursorDeBase.execute(
+                "INSERT INTO alumnos VALUES (NULL, ?, ?)", self.listaNuevoAlumno)
 
-        self.cursorDeBase.execute("SELECT id FROM alumnos")
-        self.listaCapturarIdParaMessagebox = self.cursorDeBase.fetchall()
-        self.ultimoIdParaMostrar = str(
-            self.listaCapturarIdParaMessagebox.pop())
-        self.ultimoIdParaMostrar = self.ultimoIdParaMostrar.replace(
-            "(", "").replace(")", "").replace(",", "")
+            # * Obtengo los ID's para dar la informacion
 
-        self.rootAñadirAlumno.destroy()
-        self.conexionDeBase.commit()
+            self.cursorDeBase.execute("SELECT id FROM alumnos")
+            self.listaCapturarIdParaMessagebox = self.cursorDeBase.fetchall()
+            self.ultimoIdParaMostrar = str(
+                self.listaCapturarIdParaMessagebox.pop())
+            self.ultimoIdParaMostrar = self.ultimoIdParaMostrar.replace(
+                "(", "").replace(")", "").replace(",", "")
 
-        messagebox.showinfo(
-            "Nuevo Alumno", "Se ha registrado al alumno con el ID: " + self.ultimoIdParaMostrar)
+            self.rootAñadirAlumno.destroy()
+            self.conexionDeBase.commit()
 
-        # * Obtengo valores para pasar por parametros a la funcion que mustra al new alumno en app
+            messagebox.showinfo(
+                "Nuevo Alumno", "Se ha registrado al alumno con el ID: " + self.ultimoIdParaMostrar)
 
-        # * Obtengo Id
-        self.cursorDeBase.execute("SELECT id FROM alumnos")
-        self.idAMostrar = int(str(self.cursorDeBase.fetchall().pop()).replace(
-            "(", "").replace(")", "").replace(",", ""))
+            # * Obtengo valores para pasar por parametros a la funcion que mustra al new alumno en app
 
-        # * Obtengo el Nombre
-        self.cursorDeBase.execute("SELECT nombre FROM alumnos")
-        self.nombreAMostrar = str(self.cursorDeBase.fetchall().pop()).replace(
-            "(", "").replace(")", "").replace(",", "").replace("'", "")
+            # * Obtengo Id
+            self.cursorDeBase.execute("SELECT id FROM alumnos")
+            self.idAMostrar = int(str(self.cursorDeBase.fetchall().pop()).replace(
+                "(", "").replace(")", "").replace(",", ""))
 
-        # * Obtengo la Nota
-        self.cursorDeBase.execute("SELECT nota FROM alumnos")
-        self.notaAMostrar = int(str(self.cursorDeBase.fetchall().pop()).replace(
-            "(", "").replace(")", "").replace(",", ""))
+            # * Obtengo el Nombre
+            self.cursorDeBase.execute("SELECT nombre FROM alumnos")
+            self.nombreAMostrar = str(self.cursorDeBase.fetchall().pop()).replace(
+                "(", "").replace(")", "").replace(",", "").replace("'", "")
 
-        self.mostrarAlumnoAñadidoEnApp(
-            self.idAMostrar, self.nombreAMostrar, self.notaAMostrar)
+            # * Obtengo la Nota
+            self.cursorDeBase.execute("SELECT nota FROM alumnos")
+            self.notaAMostrar = int(str(self.cursorDeBase.fetchall().pop()).replace(
+                "(", "").replace(")", "").replace(",", ""))
+
+            self.mostrarAlumnoAñadidoEnApp(
+                self.idAMostrar, self.nombreAMostrar, self.notaAMostrar)
+
+        except TclError:
+            pass
 
     def mostrarAlumnoAñadidoEnApp(self, id, nombre, nota):
 
@@ -210,18 +229,20 @@ class App:
 
         self.idDeAlumnoAEliminar = self.entryID_EliminarAlumnoRoot.get()
 
-        if self.idDeAlumnoAEliminar in self.consultarIdsParaBorrarAl:
-            self.cursorDeBase.execute(
-                "DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
-            self.rootEliminarAlumno.destroy()
-            messagebox.showinfo("Alumno Eliminado",
-                                "Se ha eliminado el alumno correctamente")
-        else:
-            messagebox.showerror("ID Alumno", "El ID ingresado no existe")
+        
 
-        self.conexionDeBase.commit()
-
-        self.quitarAlumnoDeApp(self.idDeAlumnoAEliminar)
+#        if self.idDeAlumnoAEliminar in self.consultarIdsParaBorrarAl:
+#            self.cursorDeBase.execute(
+#                "DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
+#            self.rootEliminarAlumno.destroy()
+#            messagebox.showinfo("Alumno Eliminado",
+#                                "Se ha eliminado el alumno correctamente")
+#        else:
+#            messagebox.showerror("ID Alumno", "El ID ingresado no existe")
+#
+#        self.conexionDeBase.commit()
+#
+#        self.quitarAlumnoDeApp(self.idDeAlumnoAEliminar)
 
     def quitarAlumnoDeApp(self, id):
 
@@ -252,10 +273,11 @@ class App:
     # * Funciones de menu Alumnos
 
     def funcionNuevaVentana_MenuAlumnos(self):
-        pass # ! crear nueva ventana al llamar la funcion
+        pass  # ! crear nueva ventana al llamar la funcion
 
     def funcionSalir_MenuAlumnos(self):
-        self.varSalir = messagebox.askokcancel("Salir", "¿Deseas salir de la aplicacion?")
+        self.varSalir = messagebox.askokcancel(
+            "Salir", "¿Deseas salir de la aplicacion?")
 
         if self.varSalir == True:
             self.root.destroy()
@@ -263,7 +285,127 @@ class App:
     # * Funciones de menu Archivo
 
     def funcionEditarAlumno_MenuArchivo(self):
-        pass
+        self.rootEditarAlumno_1 = tk.Tk()
+        self.rootEditarAlumno_1.title("Editar Alumno")
+
+        # * Labels Principales
+        tk.Label(self.rootEditarAlumno_1, text="Editar Alumno").grid(
+            row=0, column=0, columnspan=2, padx=7, pady=7)
+        tk.Label(self.rootEditarAlumno_1, text="ID del Alumno").grid(
+            row=1, column=0, padx=7, pady=7)
+
+        # * Entrys Principales
+        self.entryId_EditarAlumnoRoot_SV = StringVar()
+        self.entryId_EditarAlumnoRoot = tk.Entry(
+            self.rootEditarAlumno_1, textvariable=self.entryId_EditarAlumnoRoot_SV)
+        self.entryId_EditarAlumnoRoot.grid(row=1, column=1, padx=7, pady=7)
+
+        # * Botones Principales
+        self.botonContinuar_EditarAlumnoRoot = tk.Button(
+            self.rootEditarAlumno_1, text="Enviar", command=lambda: self.generarRootEditarAlumno())
+        self.botonContinuar_EditarAlumnoRoot.grid(
+            row=2, column=0, columnspan=2, padx=7, pady=7)
+
+        self.rootEditarAlumno_1.mainloop()
+
+        self.generarRootEditarAlumno()
+
+    def generarRootEditarAlumno(self):
+        try:
+            self.idDeAlumnoAEditar = self.entryId_EditarAlumnoRoot.get()
+
+            # * Obtengo los datos de id
+            self.conexionDeBase = sqlite3.connect("Base_002.db")
+            self.cursorDeBase = self.conexionDeBase.cursor()
+            self.cursorDeBase.execute('''CREATE TABLE IF NOT EXISTS alumnos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombre VARCHAR (20),
+                nota INTEGER
+            )''')
+
+            self.cursorDeBase.execute("SELECT id FROM alumnos")
+            self.listaDeIdParaVerificarEdicion = str(self.cursorDeBase.fetchall()).replace(
+                "(", "").replace(")", "").replace(",", "")
+
+            # * Confirmo que el ID sea un numero
+            if self.idDeAlumnoAEditar.isdigit() == False:
+                messagebox.showerror("ID", "El ID ingresado no es valido")
+                self.rootEditarAlumno_1.mainloop()
+
+            # * Confirmo que el id se encuentre en la base
+            if self.idDeAlumnoAEditar not in self.listaDeIdParaVerificarEdicion:
+                messagebox.showerror("ID Alumno", "El ID ingresado no existe")
+
+            else:
+                self.rootEditarAlumno_1.destroy()
+
+                self.rootEditarAlumno_2 = tk.Tk()
+                self.rootEditarAlumno_2.title("Editar Alumno")
+
+                # * Labels Principales
+                tk.Label(self.rootEditarAlumno_2, text="Editar Alumno").grid(
+                    row=0, column=0, columnspan=2, padx=7, pady=7)
+                tk.Label(self.rootEditarAlumno_2, text="Nombre").grid(
+                    row=1, column=0, padx=7, pady=7)
+                tk.Label(self.rootEditarAlumno_2, text="Nota").grid(
+                    row=2, column=0, padx=7, pady=7)
+
+                # * Entrys Principales
+                self.entryNombre_EditarAlumnoRoot2 = tk.Entry(
+                    self.rootEditarAlumno_2)
+                self.entryNombre_EditarAlumnoRoot2.grid(
+                    row=1, column=1, padx=7, pady=7)
+
+                self.entryNota_EditarAlumnoRoot2 = tk.Entry(
+                    self.rootEditarAlumno_2)
+                self.entryNota_EditarAlumnoRoot2.grid(
+                    row=2, column=1, padx=7, pady=7)
+
+                # * Buttons Principales
+                self.botonGuardar_AñadirAlumnoRoot2 = tk.Button(
+                    self.rootEditarAlumno_2, text="Guardar", command=lambda: self.funcionGuardarCambios_EditarAlumnoRoot2())
+                self.botonGuardar_AñadirAlumnoRoot2.grid(
+                    row=3, column=0, columnspan=2, padx=7, pady=7)
+
+                self.rootEditarAlumno_2.mainloop()
+
+        except TclError:
+            pass
+
+    def funcionGuardarCambios_EditarAlumnoRoot2(self):
+        # * Declaro variables (vars de nombre y nota que remplazaran)
+
+        if self.entryNombre_EditarAlumnoRoot2.get().isalpha() == False:
+            messagebox.showerror(
+                "Nombre", "Solo debes ingresar caracteres alfabeticos en el nombre")
+            self.rootEditarAlumno_2.mainloop()
+        else:
+            self.nombreAEditar = self.entryNombre_EditarAlumnoRoot2.get()
+
+        if self.entryNota_EditarAlumnoRoot2.get().isdigit() == False:
+            messagebox.showerror(
+                "Nota", "Solo debes ingresar caracteres numericos en la nota")
+            self.rootEditarAlumno_2.mainloop()
+        else:
+            self.notaAEditar = self.entryNota_EditarAlumnoRoot2.get()
+
+        # * Agrego el nombre y el id a la lista
+        self.listaDeDatosNombre_ActualizarAlumno = [
+            str(self.nombreAEditar), int(self.idDeAlumnoAEditar)]
+
+        # * Agrego la nota y el id a la lista
+        self.listaDeDatosNota_ActualizarAlumno = [
+            str(self.notaAEditar), int(self.idDeAlumnoAEditar)]
+
+        # * Realizo los cambios de nombre y nota en la base
+        self.cursorDeBase.execute("UPDATE alumnos SET nombre=? WHERE id=?", self.listaDeDatosNombre_ActualizarAlumno)
+        self.cursorDeBase.execute("UPDATE alumnos SET nota=? WHERE id=?", self.listaDeDatosNota_ActualizarAlumno)
+
+        self.conexionDeBase.commit()
+
+        self.rootEditarAlumno_2.destroy()
+
+        messagebox.showinfo("Alumno", "La informacion del alumno ha sido actualizada correctamente")
 
     def funcionVerAprobados_MenuArchivo(self):
         pass
@@ -277,7 +419,8 @@ class App:
         messagebox.showinfo("Licencia", "La licencia es mia")
 
     def funcionAcercaDe_MenuAyuda(self):
-        messagebox.showinfo("Acerca De", "App creada desde el 02 de marzo de 2022 al \n xx de blablabla")
+        messagebox.showinfo(
+            "Acerca De", "App creada desde el 02 de marzo de 2022 al \n xx de blablabla")
 
     # * Funciones para generar GUI completo
     def generarGUI(self):
@@ -383,21 +526,30 @@ class App:
 
         # * Creo las opciones de los sub menus
         # Opciones del sub menu "menuArchivo"
-        self.menuArchivo.add_command(label="Nueva Ventana", command=lambda: self.funcionNuevaVentana_MenuAlumnos())
+        self.menuArchivo.add_command(
+            label="Nueva Ventana", command=lambda: self.funcionNuevaVentana_MenuAlumnos())
         self.menuArchivo.add_separator()
-        self.menuArchivo.add_command(label="Salir", command=lambda: self.funcionSalir_MenuAlumnos())
+        self.menuArchivo.add_command(
+            label="Salir", command=lambda: self.funcionSalir_MenuAlumnos())
 
         # Opciones del sub menu "menuAlumnos"
-        self.menuAlumnos.add_command(label="Añadir Alumno", command=lambda: self.generarRootAñadirAlumno())
-        self.menuAlumnos.add_command(label="Eliminar Alumno", command=lambda: self.generarRootEliminarAlumno())
-        self.menuAlumnos.add_command(label="Editar Alumno")
+        self.menuAlumnos.add_command(
+            label="Añadir Alumno", command=lambda: self.generarRootAñadirAlumno())
+        self.menuAlumnos.add_command(
+            label="Eliminar Alumno", command=lambda: self.generarRootEliminarAlumno())
+        self.menuAlumnos.add_command(
+            label="Editar Alumno", command=lambda: self.funcionEditarAlumno_MenuArchivo())
         self.menuAlumnos.add_separator()
-        self.menuAlumnos.add_command(label="Ver Aprobados", command=lambda: self.funcionVerAprobados_MenuArchivo())
-        self.menuAlumnos.add_command(label="Ver Desaprobados", command=lambda: self.funcionVerDesaprobados_MenuArchivo())
+        self.menuAlumnos.add_command(
+            label="Ver Aprobados", command=lambda: self.funcionVerAprobados_MenuArchivo())
+        self.menuAlumnos.add_command(
+            label="Ver Desaprobados", command=lambda: self.funcionVerDesaprobados_MenuArchivo())
 
         # Opciones del sub menu "menuAyuda"
-        self.menuAyuda.add_command(label="Licencia", command=lambda: self.funcionLicencia_MenuAyuda())
-        self.menuAyuda.add_command(label="Acerca De", command=lambda: self.funcionAcercaDe_MenuAyuda())
+        self.menuAyuda.add_command(
+            label="Licencia", command=lambda: self.funcionLicencia_MenuAyuda())
+        self.menuAyuda.add_command(
+            label="Acerca De", command=lambda: self.funcionAcercaDe_MenuAyuda())
 
         # * Hago visible el menu principal y los sub menus
         self.menuPrincipal.add_cascade(menu=self.menuArchivo, label="Alumnos")
