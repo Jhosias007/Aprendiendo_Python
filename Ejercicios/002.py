@@ -16,7 +16,7 @@ class App:
     nombre_LabelNombre = "labelNombre"
     nombre_LabelNota = "labelNota"
 
-    posicionDeLabel = 0
+    contadorDeListaParaLabel = 0
     contadorParaNombre_LabelId = 1
 
     # * Lo siguiente es para mostrar al nuevo alumno en app
@@ -212,7 +212,6 @@ class App:
 
         self.rootEliminarAlumno.mainloop()
 
-    # ! Corregir, cuando elimino un alumno con id de 2 digitos hay error
     def eliminarAlumnoFuncion(self):
         
         # * Me conecto a la base de datos
@@ -235,7 +234,7 @@ class App:
         # * Consulto si el id ingresado esta en la base, si es asi, elimino el id de la base
         if self.idDeAlumnoAEliminar in self.consultarIdsParaBorrarAl:
             self.cursorDeBase.execute(
-                "DELETE FROM alumnos WHERE id=?", self.idDeAlumnoAEliminar)
+                "DELETE FROM alumnos WHERE id=?", [self.idDeAlumnoAEliminar])
             self.rootEliminarAlumno.destroy()
             messagebox.showinfo("Alumno Eliminado",
                                 "Se ha eliminado el alumno correctamente")
@@ -249,8 +248,9 @@ class App:
         self.quitarAlumnoDeApp(self.idDeAlumnoAEliminar)
 
     def quitarAlumnoDeApp(self, id):
-
         # * Elimino el alumno ingresado del diccionario de id
+        
+
         if self.nombre_LabelId + str(id) in self.diccionario_ID.keys():
             self.diccionario_ID[self.nombre_LabelId + str(id)].destroy()
             del self.diccionario_ID[self.nombre_LabelId + str(id)]
@@ -464,46 +464,43 @@ class App:
             self.listaDeClaves_nota.append(
                 int(str(i).replace(")", "").replace("(", "").replace(",", "")))
 
+        # * Obtengo los IDs para el nombre de las claves de los diccionarios
+
         # * Creo los labels de ID
         for i in self.listaDeClaves_id:
-            self.diccionario_ID[self.nombre_LabelId + str(self.contadorParaNombre_LabelId)] = tk.Label(
-                self.root, text=self.listaDeClaves_id[self.posicionDeLabel])
+            self.diccionario_ID[self.nombre_LabelId + str(self.listaDeClaves_id[self.contadorDeListaParaLabel])] = tk.Label(
+                self.root, text=self.listaDeClaves_id[self.contadorDeListaParaLabel])
             self.diccionario_ID[self.nombre_LabelId + str(
-                self.contadorParaNombre_LabelId)].grid(row=self.varFila, column=0)
+                self.listaDeClaves_id[self.contadorDeListaParaLabel])].grid(row=self.varFila, column=0)
 
             self.varFila += 1
-            self.contadorParaNombre_LabelId += 1
-            self.posicionDeLabel += 1
+            self.contadorDeListaParaLabel += 1
 
-        self.contadorParaNombre_LabelId = 1
-        self.posicionDeLabel = 0
+        self.contadorDeListaParaLabel = 0
         self.varFila = 2
 
         # * Creo los labels de Nombre
-        for i in self.listaDeClaves_nombre:
-            self.diccionario_Nombre[self.nombre_LabelNombre + str(self.contadorParaNombre_LabelId)] = tk.Label(
-                self.root, text=self.listaDeClaves_nombre[self.posicionDeLabel])
+        for i in self.listaDeClaves_id:
+            self.diccionario_Nombre[self.nombre_LabelNombre + str(self.listaDeClaves_id[self.contadorDeListaParaLabel])] = tk.Label(
+                self.root, text=self.listaDeClaves_nombre[self.contadorDeListaParaLabel])
             self.diccionario_Nombre[self.nombre_LabelNombre + str(
-                self.contadorParaNombre_LabelId)].grid(row=self.varFila, column=1)
+                self.listaDeClaves_id[self.contadorDeListaParaLabel])].grid(row=self.varFila, column=1)
 
             self.varFila += 1
-            self.contadorParaNombre_LabelId += 1
-            self.posicionDeLabel += 1
+            self.contadorDeListaParaLabel += 1
 
-        self.contadorParaNombre_LabelId = 1
-        self.posicionDeLabel = 0
+        self.contadorDeListaParaLabel = 0
         self.varFila = 2
 
         # * Creo los labels de Nota
-        for i in self.listaDeClaves_nota:
-            self.diccionario_Nota[self.nombre_LabelNota + str(self.contadorParaNombre_LabelId)] = tk.Label(
-                self.root, text=self.listaDeClaves_nota[self.posicionDeLabel])
+        for i in self.listaDeClaves_id:
+            self.diccionario_Nota[self.nombre_LabelNota + str(self.listaDeClaves_id[self.contadorDeListaParaLabel])] = tk.Label(
+                self.root, text=self.listaDeClaves_nota[self.contadorDeListaParaLabel])
             self.diccionario_Nota[self.nombre_LabelNota + str(
-                self.contadorParaNombre_LabelId)].grid(row=self.varFila, column=2)
+                self.listaDeClaves_id[self.contadorDeListaParaLabel])].grid(row=self.varFila, column=2)
 
             self.varFila += 1
-            self.contadorParaNombre_LabelId += 1
-            self.posicionDeLabel += 1
+            self.contadorDeListaParaLabel += 1
 
         # * Botones Principales
         self.generarGUI_BotonAñadirAlumno = tk.Button(
