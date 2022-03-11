@@ -213,7 +213,7 @@ class App:
         self.rootEliminarAlumno.mainloop()
 
     def eliminarAlumnoFuncion(self):
-        
+
         # * Me conecto a la base de datos
         self.conexionDeBase = sqlite3.connect("Base_002.db")
         self.cursorDeBase = self.conexionDeBase.cursor()
@@ -249,8 +249,6 @@ class App:
 
     def quitarAlumnoDeApp(self, id):
         # * Elimino el alumno ingresado del diccionario de id
-        
-
         if self.nombre_LabelId + str(id) in self.diccionario_ID.keys():
             self.diccionario_ID[self.nombre_LabelId + str(id)].destroy()
             del self.diccionario_ID[self.nombre_LabelId + str(id)]
@@ -275,7 +273,6 @@ class App:
     # * ---------------------------------- Funciones de Menu --------------------------------------------
 
     # * Funciones de menu Alumnos
-
     def funcionNuevaVentana_MenuAlumnos(self):
         pass  # ! crear nueva ventana al llamar la funcion
 
@@ -287,7 +284,6 @@ class App:
             self.root.destroy()
 
     # * Funciones de menu Archivo
-
     def funcionEditarAlumno_MenuArchivo(self):
         self.rootEditarAlumno_1 = tk.Tk()
         self.rootEditarAlumno_1.title("Editar Alumno")
@@ -377,42 +373,88 @@ class App:
             pass
 
     def funcionGuardarCambios_EditarAlumnoRoot2(self):
-        # * Declaro variables (vars de nombre y nota que remplazaran)
+        try:
+            # * Obtengo el nombre y la nota en caso de que no se quiera cambiar alguno
+            self.nombreOriginal_EditarNombre = self.diccionario_Nombre[self.nombre_LabelNombre + str(
+                self.idDeAlumnoAEditar)].cget("text")
 
-        if self.entryNombre_EditarAlumnoRoot2.get().isalpha() == False:
-            messagebox.showerror(
-                "Nombre", "Solo debes ingresar caracteres alfabeticos en el nombre")
-            self.rootEditarAlumno_2.mainloop()
-        else:
+            self.notaOriginal_EditarNota = self.diccionario_Nota[self.nombre_LabelNota + str(
+                self.idDeAlumnoAEditar)].cget("text")
+
+            # * Declaro variables (vars de nombre y nota que remplazaran)
             self.nombreAEditar = self.entryNombre_EditarAlumnoRoot2.get()
-
-        if self.entryNota_EditarAlumnoRoot2.get().isdigit() == False:
-            messagebox.showerror(
-                "Nota", "Solo debes ingresar caracteres numericos en la nota")
-            self.rootEditarAlumno_2.mainloop()
-        else:
             self.notaAEditar = self.entryNota_EditarAlumnoRoot2.get()
 
-        # * Agrego el nombre y el id a la lista
-        self.listaDeDatosNombre_ActualizarAlumno = [
-            str(self.nombreAEditar), int(self.idDeAlumnoAEditar)]
+            # * Agrego el nombre y el id a la lista
 
-        # * Agrego la nota y el id a la lista
-        self.listaDeDatosNota_ActualizarAlumno = [
-            str(self.notaAEditar), int(self.idDeAlumnoAEditar)]
+            if self.nombreAEditar != "":
+                self.listaDeDatosNombre_ActualizarAlumno = [
+                    str(self.nombreAEditar), int(self.idDeAlumnoAEditar)]
+            else:
+                self.listaDeDatosNombre_ActualizarAlumno = [
+                    str(self.nombreOriginal_EditarNombre), int(self.idDeAlumnoAEditar)
+                ]
+            
+            # * Agrego la nota y el id a la lista
+            if self.notaAEditar != "":
+                self.listaDeDatosNota_ActualizarAlumno = [
+                    str(self.notaAEditar), int(self.idDeAlumnoAEditar)
+                ]
+            else:
+                self.listaDeDatosNota_ActualizarAlumno = [
+                    str(self.notaOriginal_EditarNota), int(self.idDeAlumnoAEditar)
+                ]
 
-        # * Realizo los cambios de nombre y nota en la base
-        self.cursorDeBase.execute(
-            "UPDATE alumnos SET nombre=? WHERE id=?", self.listaDeDatosNombre_ActualizarAlumno)
-        self.cursorDeBase.execute(
-            "UPDATE alumnos SET nota=? WHERE id=?", self.listaDeDatosNota_ActualizarAlumno)
+            if self.nombreAEditar == "" and self.notaAEditar == "":# ! Tengo q hacer q el usuario cambie al menus un campo
+                messagebox.showerror("Edicion", "Debes editar por lo menos un campo")
+                self.rootEditarAlumno_2.mainloop()
 
-        self.conexionDeBase.commit()
+            # * Realizo los cambios de nombre y nota en la base
+            self.cursorDeBase.execute(
+                "UPDATE alumnos SET nombre=? WHERE id=?", self.listaDeDatosNombre_ActualizarAlumno)
+            self.cursorDeBase.execute(
+                "UPDATE alumnos SET nota=? WHERE id=?", self.listaDeDatosNota_ActualizarAlumno)
 
-        self.rootEditarAlumno_2.destroy()
+            self.conexionDeBase.commit()
 
-        messagebox.showinfo(
-            "Alumno", "La informacion del alumno ha sido actualizada correctamente")
+            self.rootEditarAlumno_2.destroy()
+
+            messagebox.showinfo(
+                "Alumno", "La informacion del alumno ha sido actualizada correctamente")
+
+            self.actualizarDatosDeAlumnoEnApp(
+                str(self.nombreAEditar),
+                int(self.notaAEditar),
+                self.diccionario_Nombre[self.nombre_LabelNombre +
+                                        str(self.idDeAlumnoAEditar)],
+                self.diccionario_Nota[self.nombre_LabelNota +
+                                      str(self.idDeAlumnoAEditar)]
+            )
+
+        except TclError:
+            pass
+
+    def actualizarDatosDeAlumnoEnApp(self, nombre, nota, lblNombre, lblNota):
+
+        # * Obtengo el nombre y nota en caso de no querer cambiar alguno
+
+        self.nombreOriginal_EditarNombre = self.diccionario_Nombre[self.nombre_LabelNombre + str(
+            self.idDeAlumnoAEditar)].cget("text")
+
+        self.notaOriginal_EditarNota = self.diccionario_Nota[self.nombre_LabelNota + str(
+            self.idDeAlumnoAEditar)].cget("text")
+
+        # * Actualizacion al nombre
+        if nombre != "":
+            lblNombre.configure(text=nombre)
+        else:
+            lblNombre.configure(text=self.nombreOriginal_EditarNombre)
+
+        # * Actualizacion a la nota
+        if nota != int():
+            lblNota.configure(text=nota)
+        else:
+            lblNota.configure(text=self.notaOriginal_EditarNota)
 
     def funcionVerAprobados_MenuArchivo(self):
         pass
