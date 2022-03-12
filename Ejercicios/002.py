@@ -27,6 +27,7 @@ class App:
     def __init__(self):
         # * Crear y modificar root principal
         self.root = tk.Tk()
+        self.root.resizable(False, False)
         self.root.title("El fin se aleja")
 
         # * Conectarse a la Base de Datos y crear tabla con un cursor
@@ -47,6 +48,7 @@ class App:
     # * Funciones de boton añadir alumno
     def generarRootAñadirAlumno(self):
         self.rootAñadirAlumno = tk.Tk()
+        self.rootAñadirAlumno.resizable(False, False)
         self.rootAñadirAlumno.title("Añadir Alumno")
 
         # * Labels del rootAñadirAlumno (no necesitan declararse)
@@ -190,6 +192,7 @@ class App:
     # * Funciones de boton eliminar alumno
     def generarRootEliminarAlumno(self):
         self.rootEliminarAlumno = tk.Tk()
+        self.rootEliminarAlumno.resizable(False, False)
         self.rootEliminarAlumno.title("Eliminar Alumno")
 
         # * Labels principales
@@ -286,6 +289,7 @@ class App:
     # * Funciones de menu Archivo
     def funcionEditarAlumno_MenuArchivo(self):
         self.rootEditarAlumno_1 = tk.Tk()
+        self.rootEditarAlumno_1.resizable(False, False)
         self.rootEditarAlumno_1.title("Editar Alumno")
 
         # * Labels Principales
@@ -340,10 +344,11 @@ class App:
                 self.rootEditarAlumno_1.destroy()
 
                 self.rootEditarAlumno_2 = tk.Tk()
+                self.rootEditarAlumno_2.resizable(False, False)
                 self.rootEditarAlumno_2.title("Editar Alumno")
 
                 # * Labels Principales
-                tk.Label(self.rootEditarAlumno_2, text="Editar Alumno").grid(
+                tk.Label(self.rootEditarAlumno_2, text="Editar Alumno - ID: " + str(self.idDeAlumnoAEditar)).grid(
                     row=0, column=0, columnspan=2, padx=7, pady=7)
                 tk.Label(self.rootEditarAlumno_2, text="Nombre").grid(
                     row=1, column=0, padx=7, pady=7)
@@ -392,9 +397,10 @@ class App:
                     str(self.nombreAEditar), int(self.idDeAlumnoAEditar)]
             else:
                 self.listaDeDatosNombre_ActualizarAlumno = [
-                    str(self.nombreOriginal_EditarNombre), int(self.idDeAlumnoAEditar)
+                    str(self.nombreOriginal_EditarNombre), int(
+                        self.idDeAlumnoAEditar)
                 ]
-            
+
             # * Agrego la nota y el id a la lista
             if self.notaAEditar != "":
                 self.listaDeDatosNota_ActualizarAlumno = [
@@ -402,11 +408,13 @@ class App:
                 ]
             else:
                 self.listaDeDatosNota_ActualizarAlumno = [
-                    str(self.notaOriginal_EditarNota), int(self.idDeAlumnoAEditar)
+                    str(self.notaOriginal_EditarNota), int(
+                        self.idDeAlumnoAEditar)
                 ]
 
-            if self.nombreAEditar == "" and self.notaAEditar == "":# ! Tengo q hacer q el usuario cambie al menus un campo
-                messagebox.showerror("Edicion", "Debes editar por lo menos un campo")
+            if self.nombreAEditar == "" and self.notaAEditar == "":
+                messagebox.showerror(
+                    "Edicion", "Debes editar por lo menos un campo")
                 self.rootEditarAlumno_2.mainloop()
 
             # * Realizo los cambios de nombre y nota en la base
@@ -424,7 +432,7 @@ class App:
 
             self.actualizarDatosDeAlumnoEnApp(
                 str(self.nombreAEditar),
-                int(self.notaAEditar),
+                self.notaAEditar,
                 self.diccionario_Nombre[self.nombre_LabelNombre +
                                         str(self.idDeAlumnoAEditar)],
                 self.diccionario_Nota[self.nombre_LabelNota +
@@ -435,9 +443,7 @@ class App:
             pass
 
     def actualizarDatosDeAlumnoEnApp(self, nombre, nota, lblNombre, lblNota):
-
         # * Obtengo el nombre y nota en caso de no querer cambiar alguno
-
         self.nombreOriginal_EditarNombre = self.diccionario_Nombre[self.nombre_LabelNombre + str(
             self.idDeAlumnoAEditar)].cget("text")
 
@@ -451,13 +457,82 @@ class App:
             lblNombre.configure(text=self.nombreOriginal_EditarNombre)
 
         # * Actualizacion a la nota
-        if nota != int():
+        if nota != "":
             lblNota.configure(text=nota)
         else:
             lblNota.configure(text=self.notaOriginal_EditarNota)
 
     def funcionVerAprobados_MenuArchivo(self):
-        pass
+        self.rootVerAprobados = tk.Tk()
+        self.rootVerAprobados.resizable(False, False)
+        self.rootVerAprobados.title("Alumnos Aprobados")
+
+        # * Vars
+        self.listaDeAprobados = list()
+        self.listaDeDesaprobados = list()
+        self.varFila = 2
+
+        # * Labels Principales
+        tk.Label(self.rootVerAprobados, text="Alumnos Aprobados", width=30).grid(
+            row=0, column=0, columnspan=3, padx=7, pady=7)
+        tk.Label(self.rootVerAprobados, text="ID").grid(
+            row=1, column=0, padx=7, pady=7)
+        tk.Label(self.rootVerAprobados, text="Nombre").grid(
+            row=1, column=1, padx=7, pady=7)
+        tk.Label(self.rootVerAprobados, text="Nota").grid(
+            row=1, column=2, padx=7, pady=7)
+
+        # * Obtengo los valores de los alumnos
+        self.conexionDeBase = sqlite3.connect("Base_002.db")
+        self.cursorDeBase = self.conexionDeBase.cursor()
+        self.cursorDeBase.execute('''CREATE TABLE IF NOT EXISTS alumnos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre VARCHAR (20),
+            nota INTEGER
+        )''')
+
+        self.cursorDeBase.execute("SELECT * FROM alumnos WHERE nota")
+        self.listaVerAprobados_V1 = self.cursorDeBase.fetchall()
+
+        # * Aqui agrego listas a la lista de aprobados y desaprobados
+        for i in self.listaVerAprobados_V1:
+            if i[2] >= 10:
+                self.listaDeAprobados.append(list(i))
+            else:
+                self.listaDeDesaprobados.append(list(i))
+
+        # * Labels Secundarios
+        # * Labels de ID
+        for i in self.listaDeAprobados:
+            tk.Label(self.rootVerAprobados, text=i[0]).grid(
+                row=self.varFila, column=0)
+            self.varFila += 1
+
+        self.varFila = 2
+
+        # * Labels de Nombre
+        for i in self.listaDeAprobados:
+            tk.Label(self.rootVerAprobados, text=i[1]).grid(
+                row=self.varFila, column=1)
+            self.varFila += 1
+
+        self.varFila = 2
+
+        # * Labels de Nota
+        for i in self.listaDeAprobados:
+            tk.Label(self.rootVerAprobados, text=i[2]).grid(
+                row=self.varFila, column=2)
+            self.varFila += 1
+
+        self.generarGUI_BotonAñadirAlumno = tk.Button(
+            self.rootVerAprobados, text="Editar Alumno", command=lambda: [self.funcionEditarAlumno_MenuArchivo(), self.funcionActualizarRoot_VerAlApr]).grid(
+                row=self.varFila, column=1, padx=7, pady=7)
+
+        self.rootVerAprobados.mainloop()
+
+    def funcionActualizarRoot_VerAlApr(self):
+        self.rootVerAprobados.destroy()
+        self.rootVerAprobados.mainloop()
 
     def funcionVerDesaprobados_MenuArchivo(self):
         pass
@@ -607,3 +682,4 @@ app_001 = App()
 
 # ! Dia 2 de Marzo del 2022. Comienza Epicamente*
 # ! Logre que los labels se eliminen en tiempo real :))))))) (Hoy es 08 de marzo del 2022)
+# ! El 1043 esta BUENASO
