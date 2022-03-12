@@ -24,6 +24,10 @@ class App:
     diccionario_Nombre = dict()
     diccionario_Nota = dict()
 
+    # * Lo siguiente es para los roots de aprobados y desaprobados
+    listaDeAprobados = list()
+    listaDeDesaprobados = list()
+
     def __init__(self):
         # * Crear y modificar root principal
         self.root = tk.Tk()
@@ -468,9 +472,9 @@ class App:
         self.rootVerAprobados.title("Alumnos Aprobados")
 
         # * Vars
-        self.listaDeAprobados = list()
-        self.listaDeDesaprobados = list()
         self.varFila = 2
+        # Aqui vacío la lista para que no se dupliquen los datos cuando se abre el root por segunda o tercera vez
+        self.listaDeAprobados.clear()
 
         # * Labels Principales
         tk.Label(self.rootVerAprobados, text="Alumnos Aprobados", width=30).grid(
@@ -491,15 +495,13 @@ class App:
             nota INTEGER
         )''')
 
-        self.cursorDeBase.execute("SELECT * FROM alumnos WHERE nota")
-        self.listaVerAprobados_V1 = self.cursorDeBase.fetchall()
-
         # * Aqui agrego listas a la lista de aprobados y desaprobados
-        for i in self.listaVerAprobados_V1:
-            if i[2] >= 10:
+        self.cursorDeBase.execute("SELECT * FROM alumnos WHERE nota")
+        self.listaAlumnos_AprobadosConDesaprobados = self.cursorDeBase.fetchall()
+
+        for i in self.listaAlumnos_AprobadosConDesaprobados:
+            if i[2] > 10:
                 self.listaDeAprobados.append(list(i))
-            else:
-                self.listaDeDesaprobados.append(list(i))
 
         # * Labels Secundarios
         # * Labels de ID
@@ -524,18 +526,87 @@ class App:
                 row=self.varFila, column=2)
             self.varFila += 1
 
-        self.generarGUI_BotonAñadirAlumno = tk.Button(
-            self.rootVerAprobados, text="Editar Alumno", command=lambda: [self.funcionEditarAlumno_MenuArchivo(), self.funcionActualizarRoot_VerAlApr]).grid(
+        # * Botones Principales
+        self.botonEditarAlumno_FuncVerAprobados = tk.Button(
+            self.rootVerAprobados, text="Editar Alumno", command=lambda: [self.funcionActualizarRoot_VerAlApr_VerAlDes, self.funcionEditarAlumno_MenuArchivo()]).grid(
                 row=self.varFila, column=1, padx=7, pady=7)
 
         self.rootVerAprobados.mainloop()
 
-    def funcionActualizarRoot_VerAlApr(self):
-        self.rootVerAprobados.destroy()
-        self.rootVerAprobados.mainloop()
+        self.varFila = 2
 
     def funcionVerDesaprobados_MenuArchivo(self):
-        pass
+        # * Vars
+        self.varFila = 2
+        # Aqui vacío la lista para que no se dupliquen los datos cuando se abre el root por segunda o tercera vez
+        self.listaDeDesaprobados.clear()
+
+        # * Creo root
+        self.rootVerDesaprobados = tk.Tk()
+        self.rootVerDesaprobados.resizable(False, False)
+        self.rootVerDesaprobados.title("Alumnos Desaprobados")
+
+        # * Labels Principales
+        tk.Label(self.rootVerDesaprobados, text="Alumnos Desaprobados", width=30).grid(
+            row=0, column=0, columnspan=3, padx=7, pady=7)
+        tk.Label(self.rootVerDesaprobados, text="ID").grid(
+            row=1, column=0, padx=7, pady=7)
+        tk.Label(self.rootVerDesaprobados, text="Nombre").grid(
+            row=1, column=1, padx=7, pady=7)
+        tk.Label(self.rootVerDesaprobados, text="Nota").grid(
+            row=1, column=2, padx=7, pady=7)
+
+        # * Obtengo los valores de los alumnos
+        self.conexionDeBase = sqlite3.connect("Base_002.db")
+        self.cursorDeBase = self.conexionDeBase.cursor()
+        self.cursorDeBase.execute('''CREATE TABLE IF NOT EXISTS alumnos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre VARCHAR (20),
+            nota INTEGER
+        )''')
+
+        # * Aqui agrego listas a la lista de aprobados y desaprobados
+        self.cursorDeBase.execute("SELECT * FROM alumnos WHERE nota")
+        self.listaAlumnos_AprobadosConDesaprobados = self.cursorDeBase.fetchall()
+
+        for i in self.listaAlumnos_AprobadosConDesaprobados:
+            if i[2] <= 10:
+                self.listaDeDesaprobados.append(list(i))
+
+        # * Creo los labels 
+        # * Labels de id
+        for i in self.listaDeDesaprobados:
+            tk.Label(self.rootVerDesaprobados, text=i[0]).grid(
+                row=self.varFila, column=0)
+            self.varFila += 1
+
+        self.varFila = 2
+        
+        # * Labels de nombre
+        for i in self.listaDeDesaprobados:
+            tk.Label(self.rootVerDesaprobados, text=i[1]).grid(
+                row=self.varFila, column=1)
+            self.varFila += 1
+
+        self.varFila = 2
+        # * Labels de nota
+        for i in self.listaDeDesaprobados:
+            tk.Label(self.rootVerDesaprobados, text=i[2]).grid(
+                row=self.varFila, column=2)
+            self.varFila += 1
+
+        # * Botones Principales
+        self.botonEditarAlumno_FuncVerAprobados = tk.Button(
+            self.rootVerDesaprobados, text="Editar Alumno", command=lambda: [self.funcionActualizarRoot_VerAlApr_VerAlDes, self.funcionEditarAlumno_MenuArchivo()]).grid(
+                row=self.varFila, column=1, padx=7, pady=7)
+
+        self.rootVerDesaprobados.mainloop()
+
+        self.varFila = 2
+    
+    def funcionActualizarRoot_VerAlApr_VerAlDes(self):
+        self.rootVerAprobados.destroy()
+        self.rootVerAprobados.mainloop()
 
     # * Funciones de menu Ayuda
 
@@ -683,3 +754,4 @@ app_001 = App()
 # ! Dia 2 de Marzo del 2022. Comienza Epicamente*
 # ! Logre que los labels se eliminen en tiempo real :))))))) (Hoy es 08 de marzo del 2022)
 # ! El 1043 esta BUENASO
+# ! CAP 81,
