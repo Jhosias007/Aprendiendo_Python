@@ -573,7 +573,7 @@ class App:
             if i[2] <= 10:
                 self.listaDeDesaprobados.append(list(i))
 
-        # * Creo los labels 
+        # * Creo los labels
         # * Labels de id
         for i in self.listaDeDesaprobados:
             tk.Label(self.rootVerDesaprobados, text=i[0]).grid(
@@ -581,7 +581,7 @@ class App:
             self.varFila += 1
 
         self.varFila = 2
-        
+
         # * Labels de nombre
         for i in self.listaDeDesaprobados:
             tk.Label(self.rootVerDesaprobados, text=i[1]).grid(
@@ -603,7 +603,7 @@ class App:
         self.rootVerDesaprobados.mainloop()
 
         self.varFila = 2
-    
+
     def funcionActualizarRoot_VerAlApr_VerAlDes(self):
         self.rootVerAprobados.destroy()
         self.rootVerAprobados.mainloop()
@@ -754,4 +754,4 @@ app_001 = App()
 # ! Dia 2 de Marzo del 2022. Comienza Epicamente*
 # ! Logre que los labels se eliminen en tiempo real :))))))) (Hoy es 08 de marzo del 2022)
 # ! El 1043 esta BUENASO
-# ! CAP 81,
+# C: 96 - P: 9
