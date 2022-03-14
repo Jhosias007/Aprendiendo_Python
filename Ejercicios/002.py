@@ -280,8 +280,8 @@ class App:
     # * ---------------------------------- Funciones de Menu --------------------------------------------
 
     # * Funciones de menu Alumnos
-    def funcionNuevaVentana_MenuAlumnos(self):
-        pass  # ! crear nueva ventana al llamar la funcion
+    def funcionNuevaVentana_MenuAlumnos(self): # La funcion no sirve de mucho xD
+        self.__init__()
 
     def funcionSalir_MenuAlumnos(self):
         self.varSalir = messagebox.askokcancel(
@@ -753,5 +753,6 @@ app_001 = App()
 
 # ! Dia 2 de Marzo del 2022. Comienza Epicamente*
 # ! Logre que los labels se eliminen en tiempo real :))))))) (Hoy es 08 de marzo del 2022)
-# ! El 1043 esta BUENASO
-# C: 96 - P: 9
+# ! Dia 14 de Marzo del 2022. Termina Epicamente (me ha tomado 12 dias xD)
+
+# C: 111 - P: 1
