@@ -755,4 +755,4 @@ app_001 = App()
 # ! Logre que los labels se eliminen en tiempo real :))))))) (Hoy es 08 de marzo del 2022)
 # ! Dia 14 de Marzo del 2022. Termina Epicamente (me ha tomado 12 dias xD)
 
-# C: 111 - P: 1
+

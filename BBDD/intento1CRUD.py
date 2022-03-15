@@ -273,9 +273,6 @@ comentarioEntry.grid(row=6, column=3, padx=10, pady=10)
 
 # Buttons - Interfaz Grafica ------------------------------------------------------------------------------
 
-# frame = Frame(root, width=350, height=400)
-# frame.pack()
-
 createButton = Button(root, text="Create", command=lambda: crearFuncion())
 createButton.grid(row=7, column=1, padx=10, pady=10)
 
