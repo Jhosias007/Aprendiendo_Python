@@ -615,7 +615,7 @@ class App:
 
     def funcionAcercaDe_MenuAyuda(self):
         messagebox.showinfo(
-            "Acerca De", "App creada desde el 02 de marzo de 2022 al \n xx de blablabla")
+            "Acerca De", "App creada desde el 02 del marzo de 2022 al \n 14 de Marzo del 2022")
 
     # * Funciones para generar GUI completo
     def generarGUI(self):

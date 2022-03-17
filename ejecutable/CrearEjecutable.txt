@@ -1,0 +1,22 @@
+Para crear un ejecutable debemos instalar 'pyinstaller' con el siguiente comando:
+-   pip install pyinstaller
+Este comando debemos ponerlo desde la consola.
+
+Luego debemos dirigirnos a la ruta donde se encuentra nuestro archivo que queremos hacer ejecutable y colocamos el comando:
+-   pyinstaller archivo.py
+Esto creara varios archivos en donde encontraremos el ejecutable en la carpeta dist
+
+Si queremos que el archivo se ejecute sin mostrar la consola detras usamos '--windowed' de la siguiente forma:
+-   pyinstaller --windowed archivo.py
+
+Si queremos que el archivo se ejecute sin tantos archivos usamos '--onefile' de la siguiente forma:
+-   pyinstaller --onefile archivo.py
+
+Si queremos que el archivo se ejecute con un icono especifico usamos '--icon' de la siguiente forma:
+-   pyinstaller --icon=./ruta/archivo.ico archivo.py
+El archivo debe ser .ico
+
+
+Hecho esto podemos mesclar todos si queremos de la siguiente forma:
+-   pyinstaller --windowed --onefile --icon=./imagen.ico archivo.py
+
